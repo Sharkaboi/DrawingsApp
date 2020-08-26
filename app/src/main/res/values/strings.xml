@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Drawings Manager</string>
     <string name="add_drawing">Add Drawing</string>
+    <string name="marker_title">Marker Title</string>
+    <string name="description">Description</string>
+    <string name="assignee_name">Assignee Name</string>
+    <string name="remarks">Remarks</string>
+    <string name="attach_images">Attach Images</string>
 </resources>
