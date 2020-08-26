@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Drawings Manager</string>
+    <string name="add_drawing">Add Drawing</string>
+</resources>
