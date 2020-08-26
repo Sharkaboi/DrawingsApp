@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.cybershark.drawingsapp.R
+import com.cybershark.drawingsapp.ui.main.MainActivity
 
 class SplashActivity : AppCompatActivity() {
 
