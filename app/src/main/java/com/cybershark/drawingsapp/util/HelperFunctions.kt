@@ -1,5 +1,7 @@
 package com.cybershark.drawingsapp.util
 
+import android.content.Context
+import android.widget.Toast
 import java.util.*
 
 internal fun Date.getFriendlyString(): String {
@@ -25,3 +27,6 @@ internal fun Calendar.getFormattedString(): String {
                 "${get(Calendar.DAY_OF_MONTH)}/${get(Calendar.MONTH)}/${get(Calendar.YEAR)}"
     }
 }
+
+internal fun Context.shortToast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+internal fun Context.longToast(message: String) = Toast.makeText(this, message, Toast.LENGTH_LONG).show()

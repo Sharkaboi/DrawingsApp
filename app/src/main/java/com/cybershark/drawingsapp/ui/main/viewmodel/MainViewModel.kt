@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.main
+package com.cybershark.drawingsapp.ui.main.viewmodel
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject

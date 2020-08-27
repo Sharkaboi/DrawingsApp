@@ -11,5 +11,6 @@ data class DrawingEntity(
     val id: Int = 0,
     val title: String,
     val timeAdded: Date,
-    val imageURI: Uri
+    val imageURI: Uri,
+    val markerCount: Int = 0
 )

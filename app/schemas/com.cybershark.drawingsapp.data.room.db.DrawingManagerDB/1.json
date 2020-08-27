@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4adddd2d5ffdf03d1877f22cff831419",
+    "identityHash": "1e904b0d85f8067ad3fbac242c7d70ae",
     "entities": [
       {
         "tableName": "drawings",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `timeAdded` INTEGER NOT NULL, `imageURI` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `timeAdded` INTEGER NOT NULL, `imageURI` TEXT NOT NULL, `markerCount` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -30,6 +30,12 @@
             "fieldPath": "imageURI",
             "columnName": "imageURI",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "markerCount",
+            "columnName": "markerCount",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -140,7 +146,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4adddd2d5ffdf03d1877f22cff831419')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1e904b0d85f8067ad3fbac242c7d70ae')"
     ]
   }
 }
