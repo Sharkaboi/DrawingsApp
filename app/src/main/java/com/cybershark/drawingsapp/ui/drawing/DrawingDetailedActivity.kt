@@ -77,9 +77,10 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
 
     private fun drawMarkers(listOfMarkers: List<MarkerEntity>) {
         // draws each marker in specified position
-        listOfMarkers.forEach { marker->
-            binding.imageView.setPin(PointF(marker.markerPositionX,marker.markerPositionY))
+        val listOfPoints = listOfMarkers.map { marker ->
+            PointF(marker.markerPositionX, marker.markerPositionY)
         }
+        binding.imageView.setPins(listOfPoints)
     }
 
     override fun onBackPressed() {

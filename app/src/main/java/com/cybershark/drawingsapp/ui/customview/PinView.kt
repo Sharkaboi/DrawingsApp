@@ -1,7 +1,10 @@
 package com.cybershark.drawingsapp.ui.customview
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
 import androidx.core.content.res.ResourcesCompat
@@ -12,23 +15,18 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? = null) :
     SubsamplingScaleImageView(context, attr) {
     private val paint = Paint()
-    private val vPin = PointF()
-    private var sPin: PointF? = null
-    private var pin: Bitmap? = null
+    private val viewCoordinatePoint = PointF()
+    private var scaledMarkerBitmap: Bitmap? = null
+    private lateinit var listOfPoints: List<PointF>
 
-    fun setPin(sPin: PointF?) {
-        this.sPin = sPin
-        initialise()
-        invalidate()
-    }
 
     private fun initialise() {
-        val density = resources.displayMetrics.densityDpi.toFloat()
-        pin = (ResourcesCompat.getDrawable(this.resources, R.drawable.ic_marker, null) as VectorDrawable).toBitmap()
-        if(pin!=null) {
-            val w = density / 420f * pin!!.width
-            val h = density / 420f * pin!!.height
-            pin = Bitmap.createScaledBitmap(pin!!, w.toInt(), h.toInt(), true)
+        val screenDensity = resources.displayMetrics.densityDpi.toFloat()
+        scaledMarkerBitmap = (ResourcesCompat.getDrawable(this.resources, R.drawable.ic_marker, null) as VectorDrawable).toBitmap()
+        if (scaledMarkerBitmap != null) {
+            val w = screenDensity / 420f * scaledMarkerBitmap!!.width
+            val h = screenDensity / 420f * scaledMarkerBitmap!!.height
+            scaledMarkerBitmap = Bitmap.createScaledBitmap(scaledMarkerBitmap!!, w.toInt(), h.toInt(), true)
         }
     }
 
@@ -40,15 +38,23 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
             return
         }
         paint.isAntiAlias = true
-        if (sPin != null && pin != null) {
-            sourceToViewCoord(sPin, vPin)
-            val vX = vPin.x - pin!!.width / 2
-            val vY = vPin.y - pin!!.height
-            canvas.drawBitmap(pin!!, vX, vY, paint)
+
+        //iterating through points and drawing
+        listOfPoints.forEach { sourceCoordinatePoint ->
+            if (scaledMarkerBitmap != null) {
+                sourceToViewCoord(sourceCoordinatePoint, viewCoordinatePoint)
+                val vX = viewCoordinatePoint.x - scaledMarkerBitmap!!.width / 2
+                val vY = viewCoordinatePoint.y - scaledMarkerBitmap!!.height
+                canvas.drawBitmap(scaledMarkerBitmap!!, vX, vY, paint)
+            }
         }
+
     }
 
-    init {
-        //initialise()
+    fun setPins(listOfPoints: List<PointF>) {
+        this.listOfPoints = listOfPoints
+        initialise()
+        invalidate()
     }
+
 }
