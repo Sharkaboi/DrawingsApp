@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.drawing.DrawingDetailedActivity">
 
-    <com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+    <com.cybershark.drawingsapp.ui.customview.PinView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

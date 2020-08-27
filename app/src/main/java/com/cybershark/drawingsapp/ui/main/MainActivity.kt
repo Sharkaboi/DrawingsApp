@@ -15,7 +15,6 @@ import com.cybershark.drawingsapp.databinding.ActivityMainBinding
 import com.cybershark.drawingsapp.ui.drawing.DrawingDetailedActivity
 import com.cybershark.drawingsapp.ui.main.adapters.MainAdapter
 import com.cybershark.drawingsapp.ui.main.adapters.MainAdapter.DrawingItemListeners
-import com.cybershark.drawingsapp.ui.main.addeditmarker.AddOrEditDrawingDialog
 import com.cybershark.drawingsapp.ui.main.viewmodel.MainViewModel
 import com.cybershark.drawingsapp.util.UIState
 import dagger.hilt.android.AndroidEntryPoint

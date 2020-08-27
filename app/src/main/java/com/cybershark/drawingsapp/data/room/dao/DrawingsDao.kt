@@ -16,9 +16,13 @@ interface DrawingsDao {
     @Delete
     suspend fun deletedDrawing(drawingEntity: DrawingEntity): Int
 
+    @Query("update drawings set markerCount=markerCount+1 where id=:drawingID")
+    suspend fun incrementMarkerCount(drawingID: Int)
+
     @Query("select * from drawings order by timeAdded desc")
     fun getAllDrawings(): LiveData<List<DrawingEntity>>
 
     @Query("select * from drawings where id=:drawingID")
     fun getDrawingByID(drawingID: Int): LiveData<DrawingEntity>
+
 }

@@ -14,7 +14,7 @@ import com.cybershark.drawingsapp.data.room.typeconvertors.UriTypeConverter
 
 @Database(
     entities = [DrawingEntity::class, MarkerEntity::class, MarkerImagesEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true
 )
 @TypeConverters(value = [DateTypeConverter::class, UriTypeConverter::class])

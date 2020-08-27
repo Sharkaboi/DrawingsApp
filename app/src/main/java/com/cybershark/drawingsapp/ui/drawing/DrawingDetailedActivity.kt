@@ -3,6 +3,7 @@ package com.cybershark.drawingsapp.ui.drawing
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.PointF
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.cybershark.drawingsapp.R
+import com.cybershark.drawingsapp.data.models.MarkerEntity
 import com.cybershark.drawingsapp.databinding.ActivityDrawingDetailedBinding
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
 import com.cybershark.drawingsapp.util.longToast
@@ -36,6 +38,12 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         binding = ActivityDrawingDetailedBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getDrawingIDFromIntent()
+        loadImage()
+        setLiveData()
+    }
+
+    private fun getDrawingIDFromIntent() {
         val bundle = intent.extras
         if (bundle != null) {
             drawingId = bundle.getInt(INTENT_ID_KEY)
@@ -43,22 +51,35 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
             finish()
             longToast("Error retrieving the drawing, Try again!")
         }
-        loadImage()
-        setLiveData()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun loadImage() {
         binding.contentLoading.isVisible = true
-        drawingViewModel.currentDrawing.observe(this) { currentDrawing ->
-            binding.imageView.setImage(ImageSource.uri(currentDrawing.imageURI))
+        binding.imageView.apply {
+            drawingViewModel.currentDrawing.observe(this@DrawingDetailedActivity) { currentDrawing ->
+                this.setImage(ImageSource.uri(currentDrawing.imageURI))
+            }
+            this.setOnImageEventListener(this@DrawingDetailedActivity)
+            this.setOnTouchListener(this@DrawingDetailedActivity)
+            this.setMinimumDpi(100)
+            //set dp super high to disable zoom on double tap
+            this.setDoubleTapZoomDpi(999999)
         }
-        binding.imageView.setOnImageEventListener(this)
-        binding.imageView.setOnTouchListener(this)
-        binding.imageView.setMinimumDpi(100)
     }
 
     private fun setLiveData() {
-//        TODO("Not yet implemented")
+        // draws markers as soon as livedata updates
+        drawingViewModel.listOfMarkers.observe(this) { listOfMarkers ->
+            drawMarkers(listOfMarkers)
+        }
+    }
+
+    private fun drawMarkers(listOfMarkers: List<MarkerEntity>) {
+        // draws each marker in specified position
+        listOfMarkers.forEach { marker->
+            binding.imageView.setPin(PointF(marker.markerPositionX,marker.markerPositionY))
+        }
     }
 
     override fun onBackPressed() {
@@ -78,6 +99,7 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         }
     }
 
+    // SubsamplingScaleImageView.OnImageEventListener Functions
     override fun onReady() {
         binding.contentLoading.isGone = true
     }
@@ -104,11 +126,13 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         //NOTHING
     }
 
+    // View.OnTouchListener methods
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
         return gestureDetector.onTouchEvent(event)
     }
 
+    // Custom gesture detector for detecting double and single tap and getting coordinates.
     private val gestureDetector by lazy {
         GestureDetector(this, object : SimpleOnGestureListener() {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
@@ -127,7 +151,8 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
                 if (binding.imageView.isReady) {
                     val sourceCoordinates = binding.imageView.viewToSourceCoord(e.x, e.y)!!
                     Log.d(TAG, "onDoubleTap: $sourceCoordinates")
-                    //TODO("Add new marker in given x and y")
+                    // passes coordinates to dialog, if confirmed; marker updated from livedata
+                    openAddMarkerDialog(sourceCoordinates, drawingId)
                 } else {
                     this@DrawingDetailedActivity.shortToast("Please wait till the image loads.")
                 }
@@ -135,4 +160,9 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
             }
         })
     }
+
+    private fun openAddMarkerDialog(sourceCoordinates: PointF, drawingId: Int) {
+        AddMarkerDialogFragment.instance(sourceCoordinates, drawingId).show(supportFragmentManager, AddMarkerDialogFragment.TAG)
+    }
+
 }

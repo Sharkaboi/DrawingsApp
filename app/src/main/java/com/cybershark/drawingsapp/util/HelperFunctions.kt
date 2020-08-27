@@ -1,8 +1,13 @@
 package com.cybershark.drawingsapp.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.widget.Toast
+import com.cybershark.drawingsapp.R
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import java.util.*
+
 
 internal fun Date.getFriendlyString(): String {
     val currentTime = Date()

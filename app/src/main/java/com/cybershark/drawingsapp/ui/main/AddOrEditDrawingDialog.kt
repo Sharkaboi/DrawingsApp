@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.main.addeditmarker
+package com.cybershark.drawingsapp.ui.main
 
 import android.app.Activity
 import android.content.Intent

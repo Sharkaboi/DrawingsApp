@@ -12,6 +12,6 @@ data class MarkerEntity(
     val description: String,
     val remarks: String,
     val assignee: String,
-    val markerPositionX: Long,
-    val markerPositionY: Long
+    val markerPositionX: Float,
+    val markerPositionY: Float
 )
