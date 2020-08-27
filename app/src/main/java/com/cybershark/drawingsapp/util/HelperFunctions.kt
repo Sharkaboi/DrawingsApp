@@ -23,8 +23,10 @@ internal fun Date.getFriendlyString(): String {
 
 internal fun Calendar.getFormattedString(): String {
     this.apply {
-        return "${get(Calendar.HOUR)}:${get(Calendar.MINUTE)} ${get(Calendar.AM_PM)} " +
-                "${get(Calendar.DAY_OF_MONTH)}/${get(Calendar.MONTH)}/${get(Calendar.YEAR)}"
+        var hour = get(Calendar.HOUR)
+        if (hour == 0) hour = 12
+        val meridian = if (get(Calendar.AM_PM) == 1) "PM" else "AM"
+        return "${hour}:${get(Calendar.MINUTE)} $meridian ${get(Calendar.DAY_OF_MONTH)}/${get(Calendar.MONTH) + 1}/${get(Calendar.YEAR)}"
     }
 }
 

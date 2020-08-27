@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cybershark.drawingsapp.R
 import com.cybershark.drawingsapp.data.models.DrawingEntity
 import com.cybershark.drawingsapp.databinding.ActivityMainBinding
 import com.cybershark.drawingsapp.ui.drawing.DrawingDetailedActivity
@@ -60,10 +61,10 @@ class MainActivity : AppCompatActivity(), DrawingItemListeners {
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             setHasFixedSize(true)
         }
-        mainViewModel.drawingsList.observe(this){ listOfDrawings: List<DrawingEntity>? ->
-            if(listOfDrawings.isNullOrEmpty()){
+        mainViewModel.drawingsList.observe(this) { listOfDrawings: List<DrawingEntity>? ->
+            if (listOfDrawings.isNullOrEmpty()) {
                 binding.tvEmptyHint.isVisible = true
-            }else{
+            } else {
                 binding.tvEmptyHint.isGone = true
                 Log.d(TAG, "setupRecyclerView: $listOfDrawings")
                 adapter.submitList(listOfDrawings)
@@ -75,6 +76,8 @@ class MainActivity : AppCompatActivity(), DrawingItemListeners {
     override fun onItemSelected(id: Int) {
         binding.contentLoading.isVisible = true
         startActivity(DrawingDetailedActivity.getIntent(this, id))
+        setCustomAnims()
+        binding.contentLoading.isGone = true
     }
 
     override fun onOptionsMenuClick(id: Int) = openPopupMenu(id)
@@ -83,6 +86,8 @@ class MainActivity : AppCompatActivity(), DrawingItemListeners {
         AddOrEditDrawingDialog.getInstance(AddOrEditDrawingDialog.EDIT, id)
             .show(supportFragmentManager, AddOrEditDrawingDialog.TAG)
     }
+
+    private fun setCustomAnims() = overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
 
     companion object {
         const val TAG = "MainActivity"

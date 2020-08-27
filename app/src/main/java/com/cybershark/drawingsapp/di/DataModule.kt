@@ -20,7 +20,7 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideRepository(
+    fun provideMainRepository(
         drawingsDao: DrawingsDao,
         markersDao: MarkersDao,
         markerImagesDao: MarkerImagesDao
