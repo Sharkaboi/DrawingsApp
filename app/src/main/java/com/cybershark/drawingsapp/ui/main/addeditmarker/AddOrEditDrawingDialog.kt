@@ -1,17 +1,14 @@
 package com.cybershark.drawingsapp.ui.main.addeditmarker
 
-import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import coil.load
@@ -21,9 +18,15 @@ import com.cybershark.drawingsapp.databinding.FragmentAddEditDrawingBinding
 import com.cybershark.drawingsapp.ui.main.viewmodel.MainViewModel
 import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast
+import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.nio.channels.FileChannel
 import java.util.*
 import kotlin.properties.Delegates
+
 
 @AndroidEntryPoint
 class AddOrEditDrawingDialog : DialogFragment() {
@@ -126,50 +129,68 @@ class AddOrEditDrawingDialog : DialogFragment() {
     }
 
     private fun getNewImageUriFromGallery() {
-        Log.e(TAG, "getNewImageUriFromGallery: entered")
-        //above marshmallow
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (isPermissionDenied()) {
-                //permission not given
-                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                //ask permission
-                requestPermissions(permissions, PERMISSION_CODE)
-            } else {
-                //permission already given
-                pickImageFromGallery()
+        ImagePicker.with(this)
+            .crop()
+            .start()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                val file = ImagePicker.getFile(data)!!
+                Log.e(TAG, "onActivityResult: $file")
+                binding.ivDrawing.load(file) {
+                    error(R.drawable.ic_error)
+                    transformations(RoundedCornersTransformation(4f))
+                }
+                val destination = "${context?.getExternalFilesDir(null)}${File.separator}Drawings${File.separator}"
+                val destinationFolder = File(destination)
+                Log.d(TAG, "onActivityResult: $destinationFolder")
+                copyImage(file, destinationFolder)
             }
-        } else {
-            //below api 23
-            pickImageFromGallery()
+            ImagePicker.RESULT_ERROR -> {
+                Log.d(TAG, "onActivityResult: ${ImagePicker.getError(data)}")
+                context?.longToast("Error getting image.")
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
         }
     }
 
-    private fun pickImageFromGallery() {
-        //open image picker
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_PICK_CODE)
-    }
+    private fun copyImage(inputFile: File, destinationFolder: File) {
+        try {
+            val exportFile = File("${destinationFolder.path}${File.separator}${inputFile.name}")
 
-    private fun isPermissionDenied(): Boolean =
-        ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
-            val uri = data?.data
-            newImageUri = uri ?: Uri.EMPTY
-            Log.e(TAG, "onActivityResult: $uri")
-            binding.ivDrawing.load(newImageUri) {
-                error(R.drawable.ic_error)
-                transformations(RoundedCornersTransformation(4f))
+            if (!destinationFolder.exists()) {
+                destinationFolder.mkdir()
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data)
+            if (!destinationFolder.canWrite()) {
+                Log.e(TAG, "copyImage: No write perm")
+                return
+            }
+            var inputChannel: FileChannel? = null
+            var outputChannel: FileChannel? = null
+            try {
+                inputChannel = FileInputStream(inputFile).channel
+                outputChannel = FileOutputStream(exportFile).channel
+            } catch (e: Exception) {
+                Log.d(TAG, "copyImage: ${e.message}")
+            }
+            inputChannel?.transferTo(0, inputChannel.size(), outputChannel)
+            inputChannel?.close()
+            outputChannel?.close()
+
+            newImageUri = exportFile.toUri()
+
+        } catch (e: Exception) {
+            context?.longToast("Error copying image!")
+            Log.e(TAG, "copyImage: ${e.printStackTrace()}")
         }
     }
 
     companion object {
-        const val TAG = "FragmentAddMarker"
+        const val TAG = "AddOrEditDrawingDialog"
         private const val EXTRAS_KEY = "drawingID"
         const val EDIT = true
         const val ADD = false
