@@ -12,7 +12,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etMarkerTitleContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:hint="@string/marker_title"
@@ -23,8 +23,8 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etMarkerTitle"
                 android:layout_width="match_parent"
-                android:ems="10"
                 android:layout_height="wrap_content"
+                android:ems="20"
                 android:inputType="text"
                 android:maxLines="1" />
 
@@ -33,7 +33,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etMarkerDescriptionContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:hint="@string/description"
@@ -45,6 +45,7 @@
                 android:id="@+id/etMarkerDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ems="20"
                 android:inputType="textMultiLine" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -52,7 +53,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etAssigneeNameContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:hint="@string/assignee_name"
@@ -64,6 +65,7 @@
                 android:id="@+id/etAssigneeName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ems="20"
                 android:inputType="text"
                 android:maxLines="1" />
 
@@ -72,7 +74,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/etRemarksContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:hint="@string/remarks"
@@ -84,6 +86,7 @@
                 android:id="@+id/etRemarks"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:ems="20"
                 android:inputType="textMultiLine" />
 
         </com.google.android.material.textfield.TextInputLayout>

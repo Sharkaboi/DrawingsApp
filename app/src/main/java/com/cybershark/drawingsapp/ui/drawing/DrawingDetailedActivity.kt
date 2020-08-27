@@ -3,7 +3,9 @@ package com.cybershark.drawingsapp.ui.drawing
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.PointF
+import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
@@ -12,6 +14,8 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.cybershark.drawingsapp.R
@@ -23,6 +27,7 @@ import com.cybershark.drawingsapp.util.shortToast
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.abs
 import kotlin.properties.Delegates
 
 
@@ -138,8 +143,16 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         GestureDetector(this, object : SimpleOnGestureListener() {
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                 if (binding.imageView.isReady) {
-                    val sourceCoordinates = binding.imageView.viewToSourceCoord(e.x, e.y)!!
-                    Log.d(TAG, "onSingleTapConfirmed: $sourceCoordinates")
+                    val tappedPoint = binding.imageView.viewToSourceCoord(e.x, e.y)!!
+                    //Checking if marker clicked
+                    drawingViewModel.listOfMarkers.value?.forEach { existingMarker ->
+                        if (abs(tappedPoint.x - existingMarker.markerPositionX) == 10f && abs(tappedPoint.y - existingMarker.markerPositionY) == 10f) {
+                            Log.d(TAG, "onSingleTapConfirmed: existing $existingMarker")
+                            Log.d(TAG, "onSingleTapConfirmed: tapped $tappedPoint")
+                            this@DrawingDetailedActivity.shortToast("Clicked!")
+                        }
+
+                    }
                     //TODO("Implement check with markers to see if marker already there if yes open bottomsheet")
                 } else {
                     this@DrawingDetailedActivity.shortToast("Please wait till the image loads.")
