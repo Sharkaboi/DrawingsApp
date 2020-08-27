@@ -25,7 +25,7 @@ constructor(
 
     val currentDrawing: LiveData<DrawingEntity> = mainRepository.getDrawingByID(stateHandle.get<Int>(INTENT_ID_KEY)!!)
 
-    val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.markingsList
+    val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.getMarkingsOfDrawingWith(stateHandle.get<Int>(INTENT_ID_KEY)!!)
 
     private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
     val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState

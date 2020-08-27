@@ -18,7 +18,6 @@ constructor(
 ) {
 
     val drawingsList: LiveData<List<DrawingEntity>> = drawingsDao.getAllDrawings()
-    val markingsList: LiveData<List<MarkerEntity>> = markerDao.getAllMarkers()
 
     suspend fun insertDrawing(drawingEntity: DrawingEntity) = withContext(Dispatchers.IO) {
         drawingsDao.insertDrawing(drawingEntity)
@@ -49,6 +48,9 @@ constructor(
         markerImagesDao.insertMarkerImage(markerImagesEntity)
     }
 
+    fun getMarkingsOfDrawingWith(drawingID: Int): LiveData<List<MarkerEntity>> {
+        return markerDao.getMarkersByID(drawingID)
+    }
     companion object {
         const val TAG = "MainRepository"
     }

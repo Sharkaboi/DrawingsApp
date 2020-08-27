@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="64dp">
+    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -24,6 +23,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etMarkerTitle"
                 android:layout_width="match_parent"
+                android:ems="10"
                 android:layout_height="wrap_content"
                 android:inputType="text"
                 android:maxLines="1" />

@@ -22,4 +22,7 @@ interface MarkersDao {
     @Query("select * from markers")
     fun getAllMarkers(): LiveData<List<MarkerEntity>>
 
+    @Query("select * from markers where drawingID=:id")
+    fun getMarkersByID(id: Int): LiveData<List<MarkerEntity>>
+
 }

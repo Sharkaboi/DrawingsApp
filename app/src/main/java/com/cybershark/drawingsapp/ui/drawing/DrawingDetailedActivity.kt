@@ -114,12 +114,12 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
 
     override fun onImageLoadError(e: Exception?) {
         this.longToast("Error Loading Image")
-        binding.imageView.setImage(ImageSource.resource(R.drawable.ic_error))
+        finish()
     }
 
     override fun onTileLoadError(e: Exception?) {
         this.longToast("Error Loading Image")
-        binding.imageView.setImage(ImageSource.resource(R.drawable.ic_error))
+        finish()
     }
 
     override fun onPreviewReleased() {
