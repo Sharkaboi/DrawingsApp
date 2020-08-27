@@ -21,7 +21,7 @@ internal fun Date.getFriendlyString(): String {
     }
 }
 
-internal fun Calendar.getFormattedString(): String {
+private fun Calendar.getFormattedString(): String {
     this.apply {
         var hour = get(Calendar.HOUR)
         if (hour == 0) hour = 12

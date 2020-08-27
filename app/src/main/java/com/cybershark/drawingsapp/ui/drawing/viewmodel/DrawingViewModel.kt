@@ -2,30 +2,31 @@ package com.cybershark.drawingsapp.ui.drawing.viewmodel
 
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.cybershark.drawingsapp.data.models.DrawingEntity
 import com.cybershark.drawingsapp.data.repository.MainRepository
 import com.cybershark.drawingsapp.util.UIState
+import kotlinx.coroutines.launch
 
 class DrawingViewModel
 @ViewModelInject
 constructor(
     private val mainRepository: MainRepository,
-    @Assisted stateHandle: SavedStateHandle
+    @Assisted private val stateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _uiState = MutableLiveData<UIState>().apply {
         value = UIState.IDLE
     }
     val uiState: LiveData<UIState> = _uiState
-    private val _drawingsList = mainRepository.drawingsList
-    val drawingsList: LiveData<List<DrawingEntity>> = _drawingsList
+    val currentDrawing: LiveData<DrawingEntity> = mainRepository.getDrawingByID(stateHandle.get<Int>(INTENT_ID_KEY)!!)
 
-    fun getDrawingByID(drawingID: Int): DrawingEntity {
-        return _drawingsList.value!!.first { it.id == drawingID }
+    fun insertMarker() {}
+
+    fun updateMarker() {}
+
+    companion object{
+        const val TAG ="DrawingViewModel"
+        const val INTENT_ID_KEY = "drawingID"
     }
-
 }

@@ -17,6 +17,8 @@ interface DrawingsDao {
     suspend fun deletedDrawing(drawingEntity: DrawingEntity): Int
 
     @Query("select * from drawings order by timeAdded desc")
-    fun getAllDrawings() : LiveData<List<DrawingEntity>>
+    fun getAllDrawings(): LiveData<List<DrawingEntity>>
 
+    @Query("select * from drawings where id=:drawingID")
+    fun getDrawingByID(drawingID: Int): LiveData<DrawingEntity>
 }
