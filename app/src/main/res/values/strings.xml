@@ -8,4 +8,5 @@
     <string name="attach_images">Attach Images</string>
     <string name="edit_drawing">Edit Drawing</string>
     <string name="drawing_title">Drawing Title</string>
+    <string name="no_drawings_added_n_add_using_the_below">No Drawings added! \n Add using the \'+\' below!</string>
 </resources>

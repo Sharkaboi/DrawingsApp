@@ -1,6 +1,7 @@
 package com.cybershark.drawingsapp.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -8,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cybershark.drawingsapp.data.models.DrawingEntity
 import com.cybershark.drawingsapp.databinding.ActivityMainBinding
 import com.cybershark.drawingsapp.ui.drawing.DrawingDetailedActivity
 import com.cybershark.drawingsapp.ui.main.adapters.MainAdapter
@@ -50,12 +52,22 @@ class MainActivity : AppCompatActivity(), DrawingItemListeners {
     }
 
     private fun setupRecyclerView() {
+        val adapter = MainAdapter(this)
         binding.contentMain.rvDrawings.apply {
-            adapter = MainAdapter(this@MainActivity)
+            this.adapter = adapter
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
             addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
             setHasFixedSize(true)
+        }
+        mainViewModel.drawingsList.observe(this){ listOfDrawings: List<DrawingEntity>? ->
+            if(listOfDrawings.isNullOrEmpty()){
+                binding.tvEmptyHint.isVisible = true
+            }else{
+                binding.tvEmptyHint.isGone = true
+                Log.d(TAG, "setupRecyclerView: $listOfDrawings")
+                adapter.submitList(listOfDrawings)
+            }
         }
     }
 

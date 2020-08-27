@@ -1,10 +1,17 @@
 package com.cybershark.drawingsapp.ui.main.addeditmarker
 
+import android.Manifest
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import coil.load
@@ -44,8 +51,8 @@ class AddOrEditDrawingDialog : DialogFragment() {
     }
 
     private fun setupLiveData() {
-        mainViewModel.uiState.observe(viewLifecycleOwner){ uiState: UIState? ->
-            when(uiState){
+        mainViewModel.uiState.observe(viewLifecycleOwner) { uiState: UIState? ->
+            when (uiState) {
                 is UIState.COMPLETED -> {
                     context?.longToast(uiState.message)
                     this.dismiss()
@@ -65,11 +72,7 @@ class AddOrEditDrawingDialog : DialogFragment() {
 
     private fun setupAddListeners() {
         binding.ivDrawing.setOnClickListener {
-            newImageUri = getNewImageUriFromGallery()
-            binding.ivDrawing.load(newImageUri) {
-                error(R.drawable.ic_error)
-                transformations(RoundedCornersTransformation(4f))
-            }
+            getNewImageUriFromGallery()
         }
         binding.btnCancel.setOnClickListener {
             this.dismiss()
@@ -77,6 +80,8 @@ class AddOrEditDrawingDialog : DialogFragment() {
         binding.btnConfirm.setOnClickListener {
             if (!::newImageUri.isInitialized) {
                 context?.longToast("No image Added!")
+            } else if (binding.etDrawingTitle.text.isNullOrBlank()) {
+                context?.longToast("Add title!")
             } else {
                 mainViewModel.insertDrawing(
                     title = binding.etDrawingTitle.text.toString(),
@@ -99,27 +104,68 @@ class AddOrEditDrawingDialog : DialogFragment() {
 
     private fun setupEditListeners() {
         binding.ivDrawing.setOnClickListener {
-            newImageUri = getNewImageUriFromGallery()
-            binding.ivDrawing.load(newImageUri) {
-                error(R.drawable.ic_error)
-                transformations(RoundedCornersTransformation(4f))
-            }
+            getNewImageUriFromGallery()
         }
         binding.btnCancel.setOnClickListener {
             this.dismiss()
         }
         binding.btnConfirm.setOnClickListener {
-            val updatedDrawingEntity = itemToEdit.copy(
-                title = binding.etDrawingTitle.text.toString(),
-                imageURI = newImageUri,
-                timeAdded = Date()
-            )
-            mainViewModel.updateDrawing(updatedDrawingEntity)
+            if (!::newImageUri.isInitialized) {
+                context?.longToast("No image Added!")
+            } else if (binding.etDrawingTitle.text.isNullOrBlank()) {
+                context?.longToast("Add title!")
+            } else {
+                val updatedDrawingEntity = itemToEdit.copy(
+                    title = binding.etDrawingTitle.text.toString(),
+                    imageURI = newImageUri,
+                    timeAdded = Date()
+                )
+                mainViewModel.updateDrawing(updatedDrawingEntity)
+            }
         }
     }
 
-    private fun getNewImageUriFromGallery(): Uri {
-        TODO("Not yet implemented")
+    private fun getNewImageUriFromGallery() {
+        Log.e(TAG, "getNewImageUriFromGallery: entered")
+        //above marshmallow
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (isPermissionDenied()) {
+                //permission not given
+                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                //ask permission
+                requestPermissions(permissions, PERMISSION_CODE)
+            } else {
+                //permission already given
+                pickImageFromGallery()
+            }
+        } else {
+            //below api 23
+            pickImageFromGallery()
+        }
+    }
+
+    private fun pickImageFromGallery() {
+        //open image picker
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
+    }
+
+    private fun isPermissionDenied(): Boolean =
+        ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == IMAGE_PICK_CODE) {
+            val uri = data?.data
+            newImageUri = uri ?: Uri.EMPTY
+            Log.e(TAG, "onActivityResult: $uri")
+            binding.ivDrawing.load(newImageUri) {
+                error(R.drawable.ic_error)
+                transformations(RoundedCornersTransformation(4f))
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 
     companion object {
@@ -127,6 +173,8 @@ class AddOrEditDrawingDialog : DialogFragment() {
         private const val EXTRAS_KEY = "drawingID"
         const val EDIT = true
         const val ADD = false
+        const val PERMISSION_CODE = 1001
+        const val IMAGE_PICK_CODE = 1000
 
         fun getInstance(action: Boolean, id: Int = 0): AddOrEditDrawingDialog {
             return if (action == EDIT) {

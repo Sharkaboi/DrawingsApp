@@ -21,13 +21,8 @@ constructor(
         value = UIState.IDLE
     }
     val uiState: LiveData<UIState> = _uiState
-    private lateinit var _drawingsList: LiveData<List<DrawingEntity>>
-
-    init {
-        viewModelScope.launch {
-            _drawingsList = mainRepository.getAllDrawings()
-        }
-    }
+    private val _drawingsList = mainRepository.drawingsList
+    val drawingsList: LiveData<List<DrawingEntity>> = _drawingsList
 
     fun getDrawingByID(drawingID: Int): DrawingEntity {
         return _drawingsList.value!!.first { it.id == drawingID }
@@ -73,5 +68,9 @@ constructor(
                 _uiState.value = UIState.COMPLETED("Deletion successful!")
             }
         }
+    }
+
+    companion object {
+        const val TAG = "MainViewModel"
     }
 }

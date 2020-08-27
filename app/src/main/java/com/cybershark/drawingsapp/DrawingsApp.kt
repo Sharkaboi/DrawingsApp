@@ -4,4 +4,8 @@ import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-class DrawingsApp : Application()
+class DrawingsApp : Application(){
+    companion object{
+        const val FolderName = "Drawings"
+    }
+}

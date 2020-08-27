@@ -34,7 +34,7 @@ class DrawingDetailedActivity : AppCompatActivity() {
         const val INTENT_ID_KEY = "drawingID"
         fun getIntent(context: Context, drawingId: Int): Intent {
             val intent = Intent(context, this::class.java)
-            intent.putExtra("drawingID", drawingId)
+            intent.putExtra(INTENT_ID_KEY, drawingId)
             return intent
         }
     }
