@@ -1,7 +1,9 @@
 package com.cybershark.drawingsapp.ui.main.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +13,7 @@ import com.cybershark.drawingsapp.R
 import com.cybershark.drawingsapp.data.models.DrawingEntity
 import com.cybershark.drawingsapp.databinding.DrawingsListItemBinding
 import com.cybershark.drawingsapp.util.getFriendlyString
+
 
 class MainAdapter(private val drawingItemListeners: DrawingItemListeners) :
     RecyclerView.Adapter<MainAdapter.DrawingsViewHolder>() {
@@ -59,8 +62,14 @@ class MainAdapter(private val drawingItemListeners: DrawingItemListeners) :
                 //Passing drawing id.
                 drawingItemListeners.onItemSelected(item.id)
             }
-            binding.ibMenu.setOnClickListener {
-                drawingItemListeners.onOptionsMenuClick(item.id)
+            binding.ibMenu.setOnClickListener { anchor: View ->
+                val popup = PopupMenu(anchor.context, anchor)
+                popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+                popup.setOnMenuItemClickListener {
+                    if (it.itemId == R.id.item_edit) drawingItemListeners.onOptionsMenuClick(item.id)
+                    return@setOnMenuItemClickListener true
+                }
+                popup.show()
             }
 
             binding.tvDrawingTitle.text = item.title

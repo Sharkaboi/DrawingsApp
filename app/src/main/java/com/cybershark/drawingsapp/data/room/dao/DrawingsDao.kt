@@ -11,13 +11,12 @@ interface DrawingsDao {
     suspend fun insertDrawing(drawingEntity: DrawingEntity): Long
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    suspend fun updateDrawing(drawingEntity: DrawingEntity): Long
+    suspend fun updateDrawing(drawingEntity: DrawingEntity): Int
 
     @Delete
-    suspend fun deletedDrawing(drawingEntity: DrawingEntity): Long
+    suspend fun deletedDrawing(drawingEntity: DrawingEntity): Int
 
     @Query("select * from drawings order by timeAdded desc")
-    suspend fun getAllDrawings() : LiveData<List<DrawingEntity>>
-
+    fun getAllDrawings() : LiveData<List<DrawingEntity>>
 
 }

@@ -11,12 +11,12 @@ interface MarkerImagesDao {
     suspend fun insertMarkerImage(markerImagesModel: MarkerImagesEntity): Long
 
     @Delete
-    suspend fun deleteMarkerImage(markerImagesModel: MarkerImagesEntity): Long
+    suspend fun deleteMarkerImage(markerImagesModel: MarkerImagesEntity): Int
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    suspend fun updateMarkerImage(markerImagesModel: MarkerImagesEntity): Long
+    suspend fun updateMarkerImage(markerImagesModel: MarkerImagesEntity): Int
 
     @Query("select * from marker_images where markerID=:markerID")
-    suspend fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
+    fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
 
 }

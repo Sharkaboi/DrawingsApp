@@ -6,4 +6,6 @@
     <string name="assignee_name">Assignee Name</string>
     <string name="remarks">Remarks</string>
     <string name="attach_images">Attach Images</string>
+    <string name="edit_drawing">Edit Drawing</string>
+    <string name="drawing_title">Drawing Title</string>
 </resources>

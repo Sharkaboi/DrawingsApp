@@ -1,5 +1,6 @@
 package com.cybershark.drawingsapp.data.repository
 
+import androidx.lifecycle.LiveData
 import com.cybershark.drawingsapp.data.models.DrawingEntity
 import com.cybershark.drawingsapp.data.room.dao.DrawingsDao
 import com.cybershark.drawingsapp.data.room.dao.MarkerImagesDao
@@ -18,4 +19,17 @@ constructor(
     suspend fun insertDrawing(drawingEntity: DrawingEntity) = withContext(Dispatchers.IO){
         drawingsDao.insertDrawing(drawingEntity)
     }
+
+    suspend fun updateDrawing(drawingEntity: DrawingEntity) = withContext(Dispatchers.IO){
+        drawingsDao.updateDrawing(drawingEntity)
+    }
+
+    suspend fun getAllDrawings(): LiveData<List<DrawingEntity>> = withContext(Dispatchers.IO){
+        drawingsDao.getAllDrawings()
+    }
+
+    suspend fun deleteDrawing(drawingEntity: DrawingEntity) = withContext(Dispatchers.IO) {
+        drawingsDao.deletedDrawing(drawingEntity)
+    }
+
 }

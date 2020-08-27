@@ -11,15 +11,15 @@ interface MarkersDao {
     suspend fun insertMarker(markerEntity: MarkerEntity): Long
 
     @Update(onConflict = OnConflictStrategy.ABORT)
-    suspend fun updateMarker(markerEntity: MarkerEntity): Long
+    suspend fun updateMarker(markerEntity: MarkerEntity): Int
 
     @Delete
-    suspend fun deleteMarker(markerEntity: MarkerEntity): Long
+    suspend fun deleteMarker(markerEntity: MarkerEntity): Int
 
     @Query("select count(*) from markers where drawingID=:drawingId")
-    suspend fun getMarkerCountOf(drawingId: Int): LiveData<Int>
+    fun getMarkerCountOf(drawingId: Int): LiveData<Int>
 
     @Query("select * from markers")
-    suspend fun getAllMarkers(): LiveData<List<MarkerEntity>>
+    fun getAllMarkers(): LiveData<List<MarkerEntity>>
 
 }

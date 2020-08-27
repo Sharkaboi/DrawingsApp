@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cybershark.drawingsapp">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".DrawingsApp"
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="UnusedAttribute">
-        <activity android:name=".ui.drawing.DrawingDetailedActivity"></activity>
+        <activity android:name=".ui.drawing.DrawingDetailedActivity" />
         <activity android:name=".ui.main.MainActivity" />
         <activity
             android:name=".ui.SplashActivity"
