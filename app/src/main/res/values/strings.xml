@@ -21,5 +21,6 @@
     <string name="delete_everything">Delete All Data</string>
     <string name="delete">Delete</string>
     <string name="images">Images</string>
+    <string name="assignee">Assignee</string>
 
 </resources>
