@@ -30,6 +30,7 @@ constructor(
     private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
     val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState
     val listOfImages = mutableListOf<Uri>()
+    lateinit var listOfImagesByMarkerID: LiveData<List<MarkerImagesEntity>>
 
     fun insertMarker(x: Float, y: Float, title: String, assignee: String, description: String, drawingID: Int, remarks: String) {
         _uiState.value = UIState.LOADING
@@ -53,7 +54,8 @@ constructor(
                 mainRepository.insertMarkerImage(
                     MarkerImagesEntity(
                         markerID = result.toInt(),
-                        imageURI = it
+                        imageURI = it,
+                        drawingID = drawingID
                     )
                 )
             }
@@ -65,11 +67,32 @@ constructor(
         }
     }
 
-    fun updateMarker() {}
+    fun updateMarker(newMarkerEntity: MarkerEntity) {
+        _uiState.value = UIState.LOADING
+        viewModelScope.launch {
+            //update to marker table
+            val result = mainRepository.updateMarker(newMarkerEntity)
+            if (result != -1) {
+                _uiState.value = UIState.COMPLETED("Updated Marker!")
+            } else {
+                _uiState.value = UIState.ERROR("Error Updating Marker!")
+            }
+        }
+    }
 
-    fun deleteMarker() {}
+    fun deleteMarker(markerID: Int) {
+        TODO("delete marker by id from markers, delete images by id from marker_images, decrement marker count of drawing by one.")
+    }
 
     fun insertMarkerImage(uri: Uri) = listOfImages.add(uri)
+
+    fun getMarkerImagesByID(markerID: Int) {
+        mainRepository.getMarkerImagesByID(markerID)
+    }
+
+    fun getMarkerByID(markerID: Int): MarkerEntity? {
+        return listOfMarkers.value?.first { it.markerID == markerID }
+    }
 
     companion object {
         const val TAG = "DrawingViewModel"

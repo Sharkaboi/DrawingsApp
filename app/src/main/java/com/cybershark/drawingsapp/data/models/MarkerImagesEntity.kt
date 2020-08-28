@@ -9,5 +9,6 @@ data class MarkerImagesEntity(
     @PrimaryKey(autoGenerate = true)
     val imageID: Int = 0,
     val markerID: Int,
+    val drawingID: Int,
     val imageURI: Uri
 )

@@ -1,0 +1,55 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <PreferenceCategory app:title="Appearance">
+
+        <SwitchPreferenceCompat
+            android:icon="@drawable/ic_theme"
+            app:key="darkTheme"
+            app:title="Dark Theme" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="App Data">
+
+        <Preference
+            android:title="@string/delete_everything"
+            app:summary="Deletes all drawings an their data."
+            app:icon="@drawable/ic_delete_forever"
+            android:key="deleteEverything" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About">
+        <Preference
+            android:icon="@drawable/ic_error"
+            app:key="versionCode"
+            app:title="@string/app_name"
+            tools:summary="1.0">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Sharkaboi/DrawingsApp" />
+        </Preference>
+
+        <Preference
+            android:icon="@drawable/ic_bug_report"
+            app:key="bugReport"
+            app:summary="@string/bug_report_summary"
+            app:title="@string/bug_report">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Sharkaboi/DrawingsApp/issues" />
+        </Preference>
+
+        <Preference
+            android:icon="@drawable/ic_download"
+            app:key="releases"
+            app:summary="Check for new releases!"
+            app:title="Releases">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/Sharkaboi/DrawingsApp/releases" />
+        </Preference>
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -16,6 +16,12 @@ interface MarkersDao {
     @Delete
     suspend fun deleteMarker(markerEntity: MarkerEntity): Int
 
+    @Query("delete from markers where drawingID=:drawingID")
+    suspend fun deleteAllMarkersOfDrawingWithID(drawingID: Int)
+
+    @Query("delete from markers")
+    suspend fun deleteAddData()
+
     @Query("select count(*) from markers where drawingID=:drawingId")
     fun getMarkerCountOf(drawingId: Int): LiveData<Int>
 

@@ -23,8 +23,9 @@ object DataModule {
     fun provideMainRepository(
         drawingsDao: DrawingsDao,
         markersDao: MarkersDao,
-        markerImagesDao: MarkerImagesDao
-    ): MainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao)
+        markerImagesDao: MarkerImagesDao,
+        @ApplicationContext context: Context
+    ): MainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao,context)
 
     @Provides
     @Singleton

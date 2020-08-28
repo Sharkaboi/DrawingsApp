@@ -11,4 +11,14 @@
     <string name="no_drawings_added_n_add_using_the_below">No Drawings added! \n Add using the \'+\' below!</string>
     <string name="confirm">Confirm</string>
     <string name="drawing_attachment">Drawing Attachment :</string>
+    <string name="delete_drawing">Delete Drawing</string>
+    <string name="edit_marker">Edit Marker</string>
+    <string name="delete_marker">Delete Marker</string>
+    <string name="irreversible">This is an irreversible operation, Do you want to proceed?</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="bug_report_summary">Submit any issues here!</string>
+    <string name="bug_report">Big Report</string>
+    <string name="delete_everything">Delete All Data</string>
+    <string name="delete">Delete</string>
+
 </resources>

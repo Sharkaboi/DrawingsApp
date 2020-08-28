@@ -58,10 +58,13 @@ constructor(
         }
     }
 
-    fun deleteDrawing(drawingEntity: DrawingEntity) {
+    // Delete Drawings and all markers associated with it
+    fun deleteDrawing(drawingID: Int) {
         _uiState.value = UIState.LOADING
         viewModelScope.launch {
-            val result = mainRepository.deleteDrawing(drawingEntity)
+            val result = mainRepository.deleteDrawing(drawingID)
+            mainRepository.deleteAllMarkersOfDrawingWithID(drawingID)
+            mainRepository.deleteAllMarkerImagesWithDrawingID(drawingID)
             if (result == -1) {
                 _uiState.value = UIState.ERROR("Deletion failed!")
             } else {

@@ -64,9 +64,10 @@ class MainAdapter(private val drawingItemListeners: DrawingItemListeners) :
             }
             binding.ibMenu.setOnClickListener { anchor: View ->
                 val popup = PopupMenu(anchor.context, anchor)
-                popup.menuInflater.inflate(R.menu.popup_menu, popup.menu)
+                popup.menuInflater.inflate(R.menu.popup_menu_drawing, popup.menu)
                 popup.setOnMenuItemClickListener {
-                    if (it.itemId == R.id.item_edit) drawingItemListeners.onOptionsMenuClick(item.id)
+                    if (it.itemId == R.id.item_edit) drawingItemListeners.onMenuEditClick(item.id)
+                    else if (it.itemId == R.id.item_delete) drawingItemListeners.onMenuDeleteClick(item.id)
                     return@setOnMenuItemClickListener true
                 }
                 popup.show()
@@ -85,6 +86,7 @@ class MainAdapter(private val drawingItemListeners: DrawingItemListeners) :
     // Interface for custom listeners
     interface DrawingItemListeners {
         fun onItemSelected(id: Int)
-        fun onOptionsMenuClick(id: Int)
+        fun onMenuEditClick(id: Int)
+        fun onMenuDeleteClick(id: Int)
     }
 }

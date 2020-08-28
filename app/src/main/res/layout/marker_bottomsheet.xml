@@ -3,9 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:visibility="gone"
+    app:behavior_hideable="false"
+    android:id="@+id/bottomSheetMarkerSV"
+    app:behavior_peekHeight="32dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+    tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomSheetLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -13,17 +20,28 @@
             android:id="@+id/tvMarkerTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_margin="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ibMenu"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Wall Construction" />
+
+        <ImageButton
+            android:id="@+id/ibMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_overflow_menu"
+            tools:ignore="ContentDescription" />
 
         <TextView
             android:id="@+id/tvMarkerAssignee"

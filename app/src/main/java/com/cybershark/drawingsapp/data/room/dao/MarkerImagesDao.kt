@@ -16,6 +16,12 @@ interface MarkerImagesDao {
     @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun updateMarkerImage(markerImagesModel: MarkerImagesEntity): Int
 
+    @Query("delete from marker_images where drawingID=:drawingID")
+    suspend fun deleteAllMarkerImagesWithDrawingID(drawingID: Int)
+
+    @Query("delete from marker_images")
+    suspend fun deleteAllData()
+
     @Query("select * from marker_images where markerID=:markerID")
     fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
 
