@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-MIT-orange)
 ![Contributors](https://img.shields.io/github/contributors/sharkaboi/mediahub)  
 An app to and and manage floor plan drawings with markers.  
-Build failing due to Github Actions's outdated Android tools in environments as stated [here](https://github.com/actions/virtual-environments/issues/1433#issuecomment-679861735)
+If build failing, it's due to Github Actions's outdated Android tools in environments as stated [here](https://github.com/actions/virtual-environments/issues/1433#issuecomment-679861735)
 
 ## Screenshots
 ![Screenshots](https://i.imgur.com/4JNiNW6.png)

@@ -17,12 +17,9 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.cybershark.drawingsapp.R
 import com.cybershark.drawingsapp.data.models.MarkerEntity
 import com.cybershark.drawingsapp.databinding.ActivityDrawingDetailedBinding
-import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
 import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast

@@ -126,9 +126,9 @@ constructor(
         return markerImagesDao.getAllMarkerImages()
     }
 
-    fun getMarkerImagesByID(markerID: Int): LiveData<List<MarkerImagesEntity>> {
-        return markerImagesDao.getMarkerImagesFromID(markerID)
-    }
+//    fun getMarkerImagesByID(markerID: Int): LiveData<List<MarkerImagesEntity>> {
+//        return markerImagesDao.getMarkerImagesFromID(markerID)
+//    }
 
     suspend fun deleteAllMarkerImagesWithDrawingID(drawingID: Int) = withContext(Dispatchers.IO) {
         markerImagesDao.deleteAllMarkerImagesWithDrawingID(drawingID)

@@ -12,7 +12,6 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cybershark.drawingsapp.databinding.FragmentAddMarkerBinding
@@ -24,11 +23,6 @@ import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast
 import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.nio.channels.FileChannel
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -53,7 +47,7 @@ class AddMarkerDialogFragment : DialogFragment() {
     }
 
     private fun setupUIStateLiveData() {
-        // Close dialong only after finish task
+        // Close dialog only after finish task
         drawingViewModel.uiState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
                 is UIState.COMPLETED -> {

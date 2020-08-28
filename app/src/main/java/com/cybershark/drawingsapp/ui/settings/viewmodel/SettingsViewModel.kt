@@ -15,6 +15,7 @@ constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    // Clears data from all tables.
     fun deleteAllData() = viewModelScope.launch { mainRepository.deleteAddData() }
 
 }

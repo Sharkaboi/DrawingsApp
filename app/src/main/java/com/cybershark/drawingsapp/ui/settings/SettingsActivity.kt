@@ -1,7 +1,5 @@
 package com.cybershark.drawingsapp.ui.settings
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,8 +14,6 @@ import com.cybershark.drawingsapp.databinding.SettingsActivityBinding
 import com.cybershark.drawingsapp.ui.settings.viewmodel.SettingsViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.NonCancellable.cancel
-import java.nio.file.Files.delete
 
 @AndroidEntryPoint
 class SettingsActivity : AppCompatActivity() {
@@ -41,6 +37,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onBackPressed()
         setCustomAnims()
     }
+
     private fun setCustomAnims() = overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
 
     // Settings Up bottom listener
