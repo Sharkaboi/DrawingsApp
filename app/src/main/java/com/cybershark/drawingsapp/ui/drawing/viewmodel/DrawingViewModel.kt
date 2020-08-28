@@ -1,6 +1,7 @@
 package com.cybershark.drawingsapp.ui.drawing.viewmodel
 
 import android.net.Uri
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -23,14 +24,15 @@ constructor(
     }
     val uiState: LiveData<UIState> = _uiState
 
-    val currentDrawing: LiveData<DrawingEntity> = mainRepository.getDrawingByID(stateHandle.get<Int>(INTENT_ID_KEY)!!)
+    val currentDrawing: LiveData<DrawingEntity> = mainRepository.getDrawingByID(stateHandle.get<Int>(INTENT_DRAWING_ID_KEY)!!)
 
-    val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.getMarkingsOfDrawingWith(stateHandle.get<Int>(INTENT_ID_KEY)!!)
+    val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.getMarkingsOfDrawingWith(stateHandle.get<Int>(INTENT_DRAWING_ID_KEY)!!)
 
     private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
     val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState
     val listOfImages = mutableListOf<Uri>()
-    lateinit var listOfImagesByMarkerID: LiveData<List<MarkerImagesEntity>>
+
+    val listOfMarkerImagesFromRoom: LiveData<List<MarkerImagesEntity>> = mainRepository.getAllMarkerImages()
 
     fun insertMarker(x: Float, y: Float, title: String, assignee: String, description: String, drawingID: Int, remarks: String) {
         _uiState.value = UIState.LOADING
@@ -68,6 +70,7 @@ constructor(
     }
 
     fun updateMarker(newMarkerEntity: MarkerEntity) {
+        Log.d(TAG, "updateMarker: $newMarkerEntity")
         _uiState.value = UIState.LOADING
         viewModelScope.launch {
             //update to marker table
@@ -86,8 +89,8 @@ constructor(
 
     fun insertMarkerImage(uri: Uri) = listOfImages.add(uri)
 
-    fun getMarkerImagesByID(markerID: Int) {
-        mainRepository.getMarkerImagesByID(markerID)
+    fun getMarkerImagesByID(markerID: Int){
+
     }
 
     fun getMarkerByID(markerID: Int): MarkerEntity? {
@@ -96,6 +99,6 @@ constructor(
 
     companion object {
         const val TAG = "DrawingViewModel"
-        const val INTENT_ID_KEY = "drawingID"
+        const val INTENT_DRAWING_ID_KEY = "drawingID"
     }
 }

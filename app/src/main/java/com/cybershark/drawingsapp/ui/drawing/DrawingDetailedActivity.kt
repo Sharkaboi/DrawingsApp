@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.PointF
+import android.graphics.drawable.VectorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
@@ -12,7 +13,8 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -27,9 +29,7 @@ import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.math.abs
 import kotlin.properties.Delegates
 
 
@@ -145,14 +145,27 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
             // Single touch detected
             override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
                 if (binding.imageView.isReady) {
-                    val tappedPoint = binding.imageView.viewToSourceCoord(e.x, e.y)!!
+                    val tappedPoint = PointF(e.x, e.y)
+                    val bitmap = (ResourcesCompat.getDrawable(resources, R.drawable.ic_marker, null) as VectorDrawable).toBitmap()
+                    val bitmapHeight = bitmap.height
+                    val bitmapWidth = bitmap.width
 
                     drawingViewModel.listOfMarkers.value?.forEach { existingMarker ->
                         //Checking if marker clicked
-                        if (abs(tappedPoint.x - existingMarker.markerPositionX) == 10f && abs(tappedPoint.y - existingMarker.markerPositionY) == 10f) {
+                        val existingMarkerPointF = PointF(existingMarker.markerPositionX, existingMarker.markerPositionY)
+                        val existingMarkerInViewCoor = binding.imageView.sourceToViewCoord(existingMarkerPointF)!!
+                        val existingMarkerX = existingMarkerInViewCoor.x
+                        val existingMarkerY = existingMarkerInViewCoor.y
+
+                        // Checking if tapped point x and y lie inside the bitmap at existing marker location.
+                        if (
+                            tappedPoint.x >= existingMarkerX - bitmapWidth / 2
+                            && tappedPoint.x <= existingMarkerX + bitmapWidth / 2
+                            && tappedPoint.y >= existingMarkerY - bitmapHeight / 2
+                            && tappedPoint.y <= existingMarkerY + bitmapHeight / 2
+                        ) {
                             Log.d(TAG, "onSingleTapConfirmed: existing $existingMarker")
                             Log.d(TAG, "onSingleTapConfirmed: tapped $tappedPoint")
-                            this@DrawingDetailedActivity.shortToast("Clicked!")
                             openBottomSheet(existingMarker)
                         }
                     }
@@ -177,72 +190,9 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         })
     }
 
-    // Making bottom sheet visible, setting data to bottom sheet
+    // Shows bottom sheet
     private fun openBottomSheet(existingMarker: MarkerEntity) {
-        binding.bottomSheetRoot.bottomSheetMarkerSV.isVisible = true
-        // Observing livedata to refresh when updated
-        drawingViewModel.listOfMarkers.observe(this) { list ->
-            val markerEntityFromLiveData = list.first { it.markerID == existingMarker.markerID }
-            binding.bottomSheetRoot.tvMarkerTitle.text = markerEntityFromLiveData.title
-            binding.bottomSheetRoot.tvMarkerDescription.text = markerEntityFromLiveData.description
-            binding.bottomSheetRoot.tvMarkerAssignee.text = markerEntityFromLiveData.assignee
-            binding.bottomSheetRoot.tvMarkerRemarks.text = markerEntityFromLiveData.remarks
-            drawingViewModel.getMarkerImagesByID(markerEntityFromLiveData.markerID)
-            setupImagesRecyclerView(markerEntityFromLiveData.markerID)
-            setupListenersForBottomSheet(markerEntityFromLiveData.markerID)
-        }
-    }
-
-    // setup Popup menu with destination functions/
-    private fun setupListenersForBottomSheet(markerID: Int) {
-        binding.bottomSheetRoot.ibMenu.setOnClickListener { anchor: View ->
-            val popup = PopupMenu(anchor.context, anchor)
-            popup.menuInflater.inflate(R.menu.popup_menu_marker, popup.menu)
-            popup.setOnMenuItemClickListener {
-                if (it.itemId == R.id.item_edit_marker) openEditDialog(markerID)
-                else if (it.itemId == R.id.item_delete_marker) confirmMarkerDelete(markerID)
-                return@setOnMenuItemClickListener true
-            }
-            popup.show()
-
-        }
-    }
-
-    // Confirm delete of marker with alert dialog.
-    private fun confirmMarkerDelete(markerID: Int) {
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.delete_marker)
-            .setMessage(R.string.irreversible)
-            .setPositiveButton(android.R.string.yes) { _, _ ->
-                drawingViewModel.deleteMarker(markerID)
-            }
-            .setNegativeButton(android.R.string.no) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    // Open dialog fragment to edit data
-    private fun openEditDialog(markerID: Int) {
-        EditMarkerDialogFragment.instance(markerID, drawingId).show(supportFragmentManager, EditMarkerDialogFragment.TAG)
-    }
-
-    // Setup choosen images from livedata
-    private fun setupImagesRecyclerView(markerID: Int) {
-        val adapter = ImagesAdapter()
-        binding.bottomSheetRoot.rvImages.apply {
-            this.adapter = adapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            itemAnimator = DefaultItemAnimator()
-        }
-        drawingViewModel.listOfImagesByMarkerID.observe(this) { listOfMarkerImages ->
-            if (listOfMarkerImages.isNullOrEmpty()) {
-                binding.bottomSheetRoot.rvImages.isVisible = false
-            } else {
-                adapter.submitList(listOfMarkerImages.map { it.imageURI })
-                binding.bottomSheetRoot.rvImages.isVisible = true
-            }
-        }
+        MarkerBottomSheet.instance(existingMarker.markerID, drawingId).show(supportFragmentManager, MarkerBottomSheet.TAG)
     }
 
     // Open dialog fragment fo adding data

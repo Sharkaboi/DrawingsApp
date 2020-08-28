@@ -25,4 +25,7 @@ interface MarkerImagesDao {
     @Query("select * from marker_images where markerID=:markerID")
     fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
 
+    @Query("select * from marker_images")
+    fun getAllMarkerImages(): LiveData<List<MarkerImagesEntity>>
+
 }

@@ -64,15 +64,18 @@ class EditMarkerDialogFragment : DialogFragment() {
                 context?.shortToast("Enter Assignee!")
             }
             else -> {
-                drawingViewModel.updateMarker(MarkerEntity(
-                    markerPositionX = currentMarker.markerPositionX,
-                    markerPositionY = currentMarker.markerPositionY,
-                    title = binding.etMarkerTitle.text.toString(),
-                    assignee = binding.etAssigneeName.text.toString(),
-                    description = binding.etMarkerDescription.text.toString(),
-                    drawingID = drawingId,
-                    remarks = binding.etRemarks.text.toString()
-                ))
+                drawingViewModel.updateMarker(
+                    MarkerEntity(
+                        markerID = markerID,
+                        markerPositionX = currentMarker.markerPositionX,
+                        markerPositionY = currentMarker.markerPositionY,
+                        title = binding.etMarkerTitle.text.toString(),
+                        assignee = binding.etAssigneeName.text.toString(),
+                        description = binding.etMarkerDescription.text.toString(),
+                        drawingID = drawingId,
+                        remarks = binding.etRemarks.text.toString()
+                    )
+                )
                 dismiss()
             }
         }
@@ -86,13 +89,10 @@ class EditMarkerDialogFragment : DialogFragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             itemAnimator = DefaultItemAnimator()
         }
-        drawingViewModel.listOfImagesByMarkerID.observe(this) { listOfMarkerImages ->
-            if (listOfMarkerImages.isNullOrEmpty()) {
-                binding.rvImages.isVisible = false
-            } else {
-                adapter.submitList(listOfMarkerImages.map { it.imageURI })
-                binding.rvImages.isVisible = true
-            }
+        drawingViewModel.listOfMarkerImagesFromRoom.observe(viewLifecycleOwner) { listOfMarkerImages ->
+            val filteredList = listOfMarkerImages.filter { it.markerID == markerID }
+            binding.rvImages.isVisible = filteredList.isNotEmpty()
+            adapter.submitList(filteredList.map { it.imageURI })
         }
     }
 
@@ -110,14 +110,14 @@ class EditMarkerDialogFragment : DialogFragment() {
     // Gets marker and drawing id from arguments
     private fun getArgs() {
         if (arguments != null) {
-            markerID = requireArguments().getInt(EditMarkerDialogFragment.MARKER_ID_KEY)
-            drawingId = requireArguments().getInt(AddMarkerDialogFragment.DRAWING_ID_KEY)
+            markerID = requireArguments().getInt(MARKER_ID_KEY)
+            drawingId = requireArguments().getInt(DRAWING_ID_KEY)
         }
     }
 
     companion object {
-        const val MARKER_ID_KEY = "markerID"
-        const val DRAWING_ID_KEY = "drawingID"
+        private const val MARKER_ID_KEY = "markerID"
+        private const val DRAWING_ID_KEY = "drawingID"
 
         fun instance(markerID: Int, drawingId: Int): AddMarkerDialogFragment {
             val args = Bundle().apply {

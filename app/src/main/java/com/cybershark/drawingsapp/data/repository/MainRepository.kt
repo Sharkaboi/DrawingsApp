@@ -70,6 +70,10 @@ constructor(
         markerImagesDao.insertMarkerImage(markerImagesEntity)
     }
 
+    fun getAllMarkerImages(): LiveData<List<MarkerImagesEntity>> {
+        return markerImagesDao.getAllMarkerImages()
+    }
+
     fun getMarkerImagesByID(markerID: Int): LiveData<List<MarkerImagesEntity>> {
         return markerImagesDao.getMarkerImagesFromID(markerID)
     }
