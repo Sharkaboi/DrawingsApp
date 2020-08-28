@@ -7,6 +7,9 @@
 An app to and and manage floor plan drawings with markers.  
 Build failing due to Github Actions's outdated Android tools in environments as stated [here](https://github.com/actions/virtual-environments/issues/1433#issuecomment-679861735)
 
+## Screenshots
+![Screenshots](https://i.imgur.com/4JNiNW6.png)
+
 ## Uses
 * Kotlin
 * MVVM Architecture
