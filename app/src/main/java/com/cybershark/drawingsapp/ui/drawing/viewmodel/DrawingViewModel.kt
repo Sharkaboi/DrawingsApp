@@ -31,10 +31,12 @@ constructor(
     // List of markers of current drawing from room
     val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.getMarkingsOfDrawingWith(stateHandle.get<Int>(INTENT_DRAWING_ID_KEY)!!)
 
-    // Temporary list and state events for image attachments
-    private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
-    val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState
-    val listOfImages = mutableListOf<Uri>()
+    // Temporary list for image attachments
+    //private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
+    //val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState
+    private val _listOfImages = MutableLiveData<List<Uri>>(emptyList())
+    val listOfImages: LiveData<List<Uri>> = _listOfImages //mutableListOf<Uri>()
+
 
     // List of stored attached images for all markers from room.
     val listOfMarkerImagesFromRoom: LiveData<List<MarkerImagesEntity>> = mainRepository.getAllMarkerImages()
@@ -58,15 +60,7 @@ constructor(
             // increment marker in drawing table
             mainRepository.incrementMarkerCount(drawingID)
             // insert marker images into marker images table
-            listOfImages.forEach {
-                mainRepository.insertMarkerImage(
-                    MarkerImagesEntity(
-                        markerID = result.toInt(),
-                        imageURI = it,
-                        drawingID = drawingID
-                    )
-                )
-            }
+            mainRepository.insertMarkerImage(result.toInt(), drawingID, _listOfImages.value ?: emptyList())
             if (result != -1L) {
                 _uiState.value = UIState.COMPLETED("Added Marker!")
             } else {
@@ -82,15 +76,7 @@ constructor(
         viewModelScope.launch {
             //update to marker table
             val result = mainRepository.updateMarker(newMarkerEntity)
-            listOfImages.forEach {
-                mainRepository.insertMarkerImage(
-                    MarkerImagesEntity(
-                        markerID = newMarkerEntity.markerID,
-                        imageURI = it,
-                        drawingID = newMarkerEntity.drawingID
-                    )
-                )
-            }
+            mainRepository.insertMarkerImage(newMarkerEntity.markerID, newMarkerEntity.drawingID, _listOfImages.value ?: emptyList())
             if (result != -1) {
                 _uiState.value = UIState.COMPLETED("Updated Marker!")
             } else {
@@ -115,8 +101,10 @@ constructor(
         }
     }
 
-    // Insert Image into temporary list of attachments.
-    fun insertMarkerImage(uri: Uri) = listOfImages.add(uri)
+    // Insert Image into temporary list of attachments livedata wrapper.
+    fun insertMarkerImage(uri: Uri) {
+        _listOfImages.value = _listOfImages.value?.plus(uri)
+    }
 
     companion object {
         const val TAG = "DrawingViewModel"

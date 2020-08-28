@@ -91,19 +91,26 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <TextView
+            android:id="@+id/tvImagesHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/images"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="@+id/etRemarksContainer"
+            app:layout_constraintTop_toBottomOf="@+id/etRemarksContainer" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvImages"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
+            android:layout_margin="8dp"
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/btnAttachImages"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etRemarksContainer"
+            app:layout_constraintTop_toBottomOf="@id/tvImagesHint"
             tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/marker_attached_images_item"
             tools:orientation="horizontal"

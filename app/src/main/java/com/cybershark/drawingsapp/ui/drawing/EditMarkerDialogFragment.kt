@@ -1,10 +1,13 @@
 package com.cybershark.drawingsapp.ui.drawing
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -14,9 +17,11 @@ import com.cybershark.drawingsapp.data.models.MarkerEntity
 import com.cybershark.drawingsapp.databinding.FragmentEditMarkerBinding
 import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
+import com.cybershark.drawingsapp.ui.main.AddOrEditDrawingDialog
 import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast
+import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
@@ -73,10 +78,19 @@ class EditMarkerDialogFragment : DialogFragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             itemAnimator = DefaultItemAnimator()
         }
-        drawingViewModel.listOfMarkerImagesFromRoom.observe(viewLifecycleOwner) { listOfMarkerImages ->
-            val filteredList = listOfMarkerImages.filter { it.markerID == markerID }
-            binding.rvImages.isVisible = filteredList.isNotEmpty()
-            adapter.submitList(filteredList.map { it.imageURI })
+        drawingViewModel.listOfMarkerImagesFromRoom.observe(viewLifecycleOwner) { listOfImagesFromRoom ->
+            val filteredList = listOfImagesFromRoom.filter { it.markerID == markerID }
+            val fullList = filteredList.map { it.imageURI }.plus(drawingViewModel.listOfImages.value ?: emptyList())
+            binding.rvImages.isVisible = fullList.isNotEmpty()
+            adapter.submitList(fullList)
+        }
+        drawingViewModel.listOfImages.observe(viewLifecycleOwner) { tempListOfImages ->
+            val filteredList = drawingViewModel.listOfMarkerImagesFromRoom.value?.filter {
+                it.markerID == markerID
+            } ?: emptyList()
+            val fullList = tempListOfImages.plus(filteredList.map { it.imageURI })
+            binding.rvImages.isVisible = fullList.isNotEmpty()
+            adapter.submitList(fullList)
         }
     }
 
@@ -86,11 +100,12 @@ class EditMarkerDialogFragment : DialogFragment() {
         binding.btnCancel.setOnClickListener { dismiss() }
         binding.btnAttachImages.setOnClickListener { getImagesFromImagePicker() }
 
-        // Uistate for giving messages
+        // Ui state for giving messages
         drawingViewModel.uiState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
                 is UIState.COMPLETED -> {
                     context?.shortToast(uiState.message)
+                    dismiss()
                 }
                 is UIState.ERROR -> {
                     context?.longToast(uiState.message)
@@ -101,7 +116,29 @@ class EditMarkerDialogFragment : DialogFragment() {
 
     // Gets Images From Imagepicker to attach
     private fun getImagesFromImagePicker() {
-        TODO("add images to list of images")
+        ImagePicker.with(this)
+            .crop()
+            .start()
+    }
+
+    // ImagePicker intent result.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                // Gets image file
+                val file = ImagePicker.getFile(data)!!
+                Log.d(AddMarkerDialogFragment.TAG, "onActivityResult: $file")
+                // inserts original uri to temporary list.
+                drawingViewModel.insertMarkerImage(file.toUri())
+            }
+            ImagePicker.RESULT_ERROR -> {
+                Log.d(AddOrEditDrawingDialog.TAG, "onActivityResult: ${ImagePicker.getError(data)}")
+                context?.longToast("Error getting image.")
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
+            }
+        }
     }
 
     // Updates marker if condition satisfied
@@ -129,7 +166,6 @@ class EditMarkerDialogFragment : DialogFragment() {
                         remarks = binding.etRemarks.text.toString()
                     )
                 )
-                dismiss()
             }
         }
     }

@@ -46,6 +46,21 @@
             tools:srcCompat="@tools:sample/avatars" />
 
         <Button
+            android:id="@+id/btnAttachDrawing"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@string/add_drawing"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            app:icon="@drawable/ic_attach_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivDrawing"
+            tools:visibility="visible" />
+
+        <Button
             android:id="@+id/btnConfirm"
             style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
             android:layout_width="wrap_content"
@@ -56,7 +71,7 @@
             android:text="@string/confirm"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivDrawing" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAttachDrawing" />
 
         <Button
             android:id="@+id/btnCancel"
@@ -72,7 +87,7 @@
             app:layout_constraintEnd_toStartOf="@+id/btnConfirm"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivDrawing" />
+            app:layout_constraintTop_toBottomOf="@+id/btnAttachDrawing" />
 
         <TextView
             android:id="@+id/tvDrawingHint"

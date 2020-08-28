@@ -9,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import com.cybershark.drawingsapp.R
@@ -20,6 +22,9 @@ import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast
 import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -44,15 +49,21 @@ class AddOrEditDrawingDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        getArgsAndSetup()
+        setupLiveData()
+    }
+
+    // Gets arguments based on which either edit or add dialog is setup.
+    private fun getArgsAndSetup() {
         if (arguments != null && arguments?.containsKey(EXTRAS_KEY) == true) {
             drawingID = requireArguments().getInt(EXTRAS_KEY)
             setupEditDialog()
         } else {
             setupAddDialog()
         }
-        setupLiveData()
     }
 
+    // Observing ui state to show errors and loading bars.
     private fun setupLiveData() {
         mainViewModel.uiState.observe(viewLifecycleOwner) { uiState: UIState? ->
             when (uiState) {
@@ -68,12 +79,19 @@ class AddOrEditDrawingDialog : DialogFragment() {
         }
     }
 
+    // Setting up add drawing dialog
     private fun setupAddDialog() {
-        binding.ivDrawing.load(R.drawable.ic_attach_image)
+        binding.btnAttachDrawing.isVisible = true
+        binding.ivDrawing.isVisible = false
+        //binding.ivDrawing.load(R.drawable.ic_attach_image)
         setupAddListeners()
     }
 
+    // Sets up click listeners
     private fun setupAddListeners() {
+        binding.btnAttachDrawing.setOnClickListener {
+            getNewImageUriFromGallery()
+        }
         binding.ivDrawing.setOnClickListener {
             getNewImageUriFromGallery()
         }
@@ -95,6 +113,14 @@ class AddOrEditDrawingDialog : DialogFragment() {
         }
     }
 
+    // Loads Imagepicker
+    private fun getNewImageUriFromGallery() {
+        ImagePicker.with(this)
+            .crop()
+            .start()
+    }
+
+    //Sets up edit option dialog
     private fun setupEditDialog() {
         binding.etDrawingTitle.setText(itemToEdit.title)
         binding.ivDrawing.load(itemToEdit.imageURI) {
@@ -105,6 +131,7 @@ class AddOrEditDrawingDialog : DialogFragment() {
         setupEditListeners()
     }
 
+    //Sets up click listeners for edit dialog.
     private fun setupEditListeners() {
         binding.ivDrawing.setOnClickListener {
             getNewImageUriFromGallery()
@@ -128,25 +155,27 @@ class AddOrEditDrawingDialog : DialogFragment() {
         }
     }
 
-    private fun getNewImageUriFromGallery() {
-        ImagePicker.with(this)
-            .crop()
-            .start()
-    }
-
+    // Activity result from image picker.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (resultCode) {
             Activity.RESULT_OK -> {
+                // Gets image file
                 val file = ImagePicker.getFile(data)!!
-                Log.e(TAG, "onActivityResult: $file")
+                Log.d(TAG, "onActivityResult: $file")
+                //Shows imageView and hides attach button.
+                binding.btnAttachDrawing.isVisible = false
+                binding.ivDrawing.isVisible = true
+                //Loads image
                 binding.ivDrawing.load(file) {
                     error(R.drawable.ic_error)
                     transformations(RoundedCornersTransformation(4f))
                 }
-                val destination = "${context?.getExternalFilesDir(null)}${File.separator}Drawings${File.separator}"
-                val destinationFolder = File(destination)
-                Log.d(TAG, "onActivityResult: $destinationFolder")
-                copyImage(file, destinationFolder)
+                // Path to copy file to.
+                val destinationFolder = File("${context?.getExternalFilesDir(null)}${File.separator}Drawings${File.separator}")
+                // Copies image in suspend function.
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                    copyImage(file, destinationFolder)
+                }
             }
             ImagePicker.RESULT_ERROR -> {
                 Log.d(TAG, "onActivityResult: ${ImagePicker.getError(data)}")
@@ -158,6 +187,7 @@ class AddOrEditDrawingDialog : DialogFragment() {
         }
     }
 
+    // Copies image to app folder.
     private fun copyImage(inputFile: File, destinationFolder: File) {
         try {
             val exportFile = File("${destinationFolder.path}${File.separator}${inputFile.name}")
@@ -181,6 +211,7 @@ class AddOrEditDrawingDialog : DialogFragment() {
             inputChannel?.close()
             outputChannel?.close()
 
+            // sets new image uri after copying.
             newImageUri = exportFile.toUri()
 
         } catch (e: Exception) {
@@ -194,8 +225,6 @@ class AddOrEditDrawingDialog : DialogFragment() {
         private const val EXTRAS_KEY = "drawingID"
         const val EDIT = true
         const val ADD = false
-        const val PERMISSION_CODE = 1001
-        const val IMAGE_PICK_CODE = 1000
 
         fun getInstance(action: Boolean, id: Int = 0): AddOrEditDrawingDialog {
             return if (action == EDIT) {

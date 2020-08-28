@@ -1,20 +1,34 @@
 package com.cybershark.drawingsapp.ui.drawing
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.PointF
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cybershark.drawingsapp.databinding.FragmentAddMarkerBinding
 import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
+import com.cybershark.drawingsapp.ui.main.AddOrEditDrawingDialog
+import com.cybershark.drawingsapp.util.UIState
+import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast
+import com.github.dhaval2404.imagepicker.ImagePicker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.nio.channels.FileChannel
 import kotlin.properties.Delegates
 
 @AndroidEntryPoint
@@ -33,25 +47,28 @@ class AddMarkerDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
+        setupUIStateLiveData()
         setupRecyclerView()
         setupListeners()
     }
 
-    private fun setupRecyclerView() {
-        val adapter = ImagesAdapter()
-        binding.rvImages.apply {
-            this.adapter = adapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            itemAnimator = DefaultItemAnimator()
-        }
-        drawingViewModel.listOfImagesRefreshState.observe(viewLifecycleOwner) { shouldRefresh ->
-            if (shouldRefresh) {
-                adapter.submitList(drawingViewModel.listOfImages)
-                binding.rvImages.isVisible = drawingViewModel.listOfImages.isNotEmpty()
+    private fun setupUIStateLiveData() {
+        // Close dialong only after finish task
+        drawingViewModel.uiState.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
+                is UIState.COMPLETED -> {
+                    context?.shortToast(uiState.message)
+                    dismiss()
+                }
+                is UIState.ERROR -> {
+                    context?.longToast(uiState.message)
+                    dismiss()
+                }
             }
         }
     }
 
+    // Gets arguments from intent.
     private fun getArgs() {
         if (arguments != null) {
             coordinatePoints = PointF(
@@ -62,16 +79,41 @@ class AddMarkerDialogFragment : DialogFragment() {
         }
     }
 
+    // Sets up images recyclerview.
+    private fun setupRecyclerView() {
+        val adapter = ImagesAdapter()
+        binding.rvImages.apply {
+            this.adapter = adapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            itemAnimator = DefaultItemAnimator()
+        }
+        // livedata list of temporary images.
+        drawingViewModel.listOfImages.observe(viewLifecycleOwner) { list ->
+            val nullOrEmpty = list.isNullOrEmpty()
+            binding.rvImages.isVisible = !nullOrEmpty
+            if (nullOrEmpty) {
+                adapter.submitList(emptyList())
+            } else {
+                adapter.submitList(list)
+            }
+        }
+    }
+
+    // Click Listeners
     private fun setupListeners() {
         binding.btnConfirm.setOnClickListener { confirmMarker() }
         binding.btnCancel.setOnClickListener { dismiss() }
         binding.btnAttachImages.setOnClickListener { getImagesFromGallery() }
     }
 
+    // Start Image Picker.
     private fun getImagesFromGallery() {
-        TODO("Get images from gallery and store in list in viewmodel")
+        ImagePicker.with(this)
+            .crop()
+            .start()
     }
 
+    // Confirm Marker addition. Increments in all tables.
     private fun confirmMarker() {
         when {
             binding.etMarkerTitle.text.isNullOrBlank() -> {
@@ -93,7 +135,26 @@ class AddMarkerDialogFragment : DialogFragment() {
                     drawingId,
                     binding.etRemarks.text.toString()
                 )
-                dismiss()
+            }
+        }
+    }
+
+    // ImagePicker intent result.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                // Gets image file
+                val file = ImagePicker.getFile(data)!!
+                Log.d(TAG, "onActivityResult: $file")
+                // inserts original uri to temporary list.
+                drawingViewModel.insertMarkerImage(file.toUri())
+            }
+            ImagePicker.RESULT_ERROR -> {
+                Log.d(AddOrEditDrawingDialog.TAG, "onActivityResult: ${ImagePicker.getError(data)}")
+                context?.longToast("Error getting image.")
+            }
+            else -> {
+                super.onActivityResult(requestCode, resultCode, data)
             }
         }
     }
