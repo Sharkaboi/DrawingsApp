@@ -19,21 +19,27 @@ constructor(
     @Assisted private val stateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    // UI State livedata to observe ans show respective state
     private val _uiState = MutableLiveData<UIState>().apply {
         value = UIState.IDLE
     }
     val uiState: LiveData<UIState> = _uiState
 
+    // Drawing entity which is currently selected.
     val currentDrawing: LiveData<DrawingEntity> = mainRepository.getDrawingByID(stateHandle.get<Int>(INTENT_DRAWING_ID_KEY)!!)
 
+    // List of markers of current drawing from room
     val listOfMarkers: LiveData<List<MarkerEntity>> = mainRepository.getMarkingsOfDrawingWith(stateHandle.get<Int>(INTENT_DRAWING_ID_KEY)!!)
 
+    // Temporary list and state events for image attachments
     private val _listOfImagesRefreshState = MutableLiveData<Boolean>().apply { value = false }
     val listOfImagesRefreshState: LiveData<Boolean> = _listOfImagesRefreshState
     val listOfImages = mutableListOf<Uri>()
 
+    // List of stored attached images for all markers from room.
     val listOfMarkerImagesFromRoom: LiveData<List<MarkerImagesEntity>> = mainRepository.getAllMarkerImages()
 
+    // Inserts marker to marker table, increments marker count in drawing table and inserts any attachments to marker_images table.
     fun insertMarker(x: Float, y: Float, title: String, assignee: String, description: String, drawingID: Int, remarks: String) {
         _uiState.value = UIState.LOADING
         viewModelScope.launch {
@@ -69,12 +75,22 @@ constructor(
         }
     }
 
+    // Updates marker with new details.
     fun updateMarker(newMarkerEntity: MarkerEntity) {
         Log.d(TAG, "updateMarker: $newMarkerEntity")
         _uiState.value = UIState.LOADING
         viewModelScope.launch {
             //update to marker table
             val result = mainRepository.updateMarker(newMarkerEntity)
+            listOfImages.forEach {
+                mainRepository.insertMarkerImage(
+                    MarkerImagesEntity(
+                        markerID = newMarkerEntity.markerID,
+                        imageURI = it,
+                        drawingID = newMarkerEntity.drawingID
+                    )
+                )
+            }
             if (result != -1) {
                 _uiState.value = UIState.COMPLETED("Updated Marker!")
             } else {
@@ -83,19 +99,24 @@ constructor(
         }
     }
 
-    fun deleteMarker(markerID: Int) {
-        TODO("delete marker by id from markers, delete images by id from marker_images, decrement marker count of drawing by one.")
+    // Deletes marker from marker table, deletes all attached images, decrements marker count in drawing table by 1.
+    fun deleteMarker(markerID: Int, drawingID: Int) {
+        _uiState.value = UIState.LOADING
+        viewModelScope.launch {
+            //delete to marker table
+            val result = mainRepository.deleteMarkerByID(markerID)
+            mainRepository.deleteAllMarkerImagesWithMarkerID(markerID)
+            mainRepository.decrementMarkerCount(drawingID)
+            if (result != -1) {
+                _uiState.value = UIState.COMPLETED("Deleted Marker!")
+            } else {
+                _uiState.value = UIState.ERROR("Error Deleting Marker!")
+            }
+        }
     }
 
+    // Insert Image into temporary list of attachments.
     fun insertMarkerImage(uri: Uri) = listOfImages.add(uri)
-
-    fun getMarkerImagesByID(markerID: Int){
-
-    }
-
-    fun getMarkerByID(markerID: Int): MarkerEntity? {
-        return listOfMarkers.value?.first { it.markerID == markerID }
-    }
 
     companion object {
         const val TAG = "DrawingViewModel"

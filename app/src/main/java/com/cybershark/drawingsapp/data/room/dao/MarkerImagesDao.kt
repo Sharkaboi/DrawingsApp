@@ -22,10 +22,15 @@ interface MarkerImagesDao {
     @Query("delete from marker_images")
     suspend fun deleteAllData()
 
+    @Query("delete from marker_images where markerID=:markerID")
+    suspend fun deleteAllMarkerImagesWithMarkerID(markerID: Int) : Int
+
     @Query("select * from marker_images where markerID=:markerID")
     fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
 
     @Query("select * from marker_images")
     fun getAllMarkerImages(): LiveData<List<MarkerImagesEntity>>
+
+
 
 }

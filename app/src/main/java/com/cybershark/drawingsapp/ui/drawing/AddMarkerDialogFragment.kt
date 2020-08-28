@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cybershark.drawingsapp.databinding.FragmentAddEditMarkerBinding
+import com.cybershark.drawingsapp.databinding.FragmentAddMarkerBinding
 import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
 import com.cybershark.drawingsapp.util.shortToast
@@ -20,13 +20,13 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class AddMarkerDialogFragment : DialogFragment() {
 
-    private lateinit var binding: FragmentAddEditMarkerBinding
+    private lateinit var binding: FragmentAddMarkerBinding
     private val drawingViewModel by viewModels<DrawingViewModel>()
     private lateinit var coordinatePoints: PointF
     private var drawingId by Delegates.notNull<Int>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentAddEditMarkerBinding.inflate(inflater, container, false)
+        binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
         return binding.root
     }
 

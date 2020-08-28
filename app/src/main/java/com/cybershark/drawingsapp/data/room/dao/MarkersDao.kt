@@ -13,8 +13,8 @@ interface MarkersDao {
     @Update(onConflict = OnConflictStrategy.ABORT)
     suspend fun updateMarker(markerEntity: MarkerEntity): Int
 
-    @Delete
-    suspend fun deleteMarker(markerEntity: MarkerEntity): Int
+    @Query("delete from markers where markerID=:markerID")
+    suspend fun deleteMarkerByID(markerID: Int): Int
 
     @Query("delete from markers where drawingID=:drawingID")
     suspend fun deleteAllMarkersOfDrawingWithID(drawingID: Int)

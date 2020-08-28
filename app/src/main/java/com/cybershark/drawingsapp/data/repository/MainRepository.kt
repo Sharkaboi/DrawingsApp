@@ -65,6 +65,10 @@ constructor(
         markerDao.deleteAllMarkersOfDrawingWithID(drawingID)
     }
 
+    suspend fun deleteMarkerByID(markerID: Int) = withContext(Dispatchers.IO) {
+        markerDao.deleteMarkerByID(markerID)
+    }
+
     // marker images dao operations
     suspend fun insertMarkerImage(markerImagesEntity: MarkerImagesEntity) = withContext(Dispatchers.IO) {
         markerImagesDao.insertMarkerImage(markerImagesEntity)
@@ -80,6 +84,10 @@ constructor(
 
     suspend fun deleteAllMarkerImagesWithDrawingID(drawingID: Int) = withContext(Dispatchers.IO) {
         markerImagesDao.deleteAllMarkerImagesWithDrawingID(drawingID)
+    }
+
+    suspend fun deleteAllMarkerImagesWithMarkerID(markerID: Int) = withContext(Dispatchers.IO) {
+        markerImagesDao.deleteAllMarkerImagesWithMarkerID(markerID)
     }
 
     // Deletes all data from tables and external dir
@@ -99,6 +107,7 @@ constructor(
             Log.e(TAG, "deleteAllImagesFromAppFolder: ${e.printStackTrace()}")
         }
     }
+
 
     companion object {
         const val TAG = "MainRepository"

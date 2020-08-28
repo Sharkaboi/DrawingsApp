@@ -20,7 +20,7 @@ interface DrawingsDao {
     suspend fun incrementMarkerCount(drawingID: Int)
 
     @Query("update drawings set markerCount=markerCount-1 where id=:drawingID")
-    suspend fun decrementMarkerCount(drawingID: Int)
+    suspend fun decrementMarkerCount(drawingID: Int) :Int
 
     @Query("delete from drawings")
     suspend fun deleteAllData()
