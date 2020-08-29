@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.GestureDetector
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import androidx.activity.viewModels
@@ -41,6 +42,7 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         super.onCreate(savedInstanceState)
         binding = ActivityDrawingDetailedBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbarDrawing)
 
         getDrawingIDFromIntent()
         loadImage()
@@ -91,6 +93,18 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         drawingViewModel.listOfMarkers.observe(this) { listOfMarkers ->
             drawMarkers(listOfMarkers)
         }
+        // Sets toolbar title to drawing title
+        drawingViewModel.currentDrawing.observe(this) { currentDrawing ->
+            binding.toolbarDrawing.title = currentDrawing.title
+        }
+    }
+
+    // Settings Up bottom listener
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> onBackPressed()
+        }
+        return true
     }
 
     private fun drawMarkers(listOfMarkers: List<MarkerEntity>) {
@@ -100,7 +114,6 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         }
         binding.imageView.setPins(listOfPoints)
     }
-
 
     // SubsamplingScaleImageView.OnImageEventListener Functions to show loading screen
     override fun onReady() {

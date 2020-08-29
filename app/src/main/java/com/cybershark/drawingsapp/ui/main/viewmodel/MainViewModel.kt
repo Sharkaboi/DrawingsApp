@@ -31,11 +31,25 @@ constructor(
     fun updateDrawing(drawingEntity: DrawingEntity) {
         _uiState.value = UIState.LOADING
         viewModelScope.launch {
-            val result = mainRepository.updateDrawing(drawingEntity)
-            if (result == -1) {
-                _uiState.value = UIState.ERROR("Updation failed!")
+            val previousDrawingEntity = _drawingsList.value?.first { it.id == drawingEntity.id }
+            // Deleting all markers and marker images of drawing if image is updated.
+            if (previousDrawingEntity?.imageURI != drawingEntity.imageURI) {
+                mainRepository.deleteAllMarkerImagesWithDrawingID(drawingEntity.id)
+                mainRepository.deleteAllMarkersOfDrawingWithID(drawingEntity.id)
+                val newEntityWithZeroMarkerCount: DrawingEntity = drawingEntity.copy(markerCount = 0)
+                val result = mainRepository.updateDrawing(newEntityWithZeroMarkerCount)
+                if (result == -1) {
+                    _uiState.value = UIState.ERROR("Updation failed!")
+                } else {
+                    _uiState.value = UIState.COMPLETED("Updation successful!")
+                }
             } else {
-                _uiState.value = UIState.COMPLETED("Updation successful!")
+                val result = mainRepository.updateDrawing(drawingEntity)
+                if (result == -1) {
+                    _uiState.value = UIState.ERROR("Updation failed!")
+                } else {
+                    _uiState.value = UIState.COMPLETED("Updation successful!")
+                }
             }
         }
     }
