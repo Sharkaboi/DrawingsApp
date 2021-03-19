@@ -3,7 +3,7 @@
 ![Kotlin Version](https://img.shields.io/badge/Kotlin-1.4.31-blue)
 ![Min API](https://img.shields.io/badge/Min%20API-21-green)
 ![License](https://img.shields.io/badge/License-MIT-orange)
-![Contributors](https://img.shields.io/github/contributors/sharkaboi/DrawingsApp)
+![Contributors](https://img.shields.io/github/contributors/sharkaboi/DrawingsApp)  
 An app to add and manage floor plan drawings with markers.
 
 ## Screenshots
