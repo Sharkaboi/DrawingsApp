@@ -10,11 +10,11 @@ import com.cybershark.drawingsapp.data.room.db.DrawingManagerDB
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 @Module
 object DataModule {
 
@@ -25,7 +25,7 @@ object DataModule {
         markersDao: MarkersDao,
         markerImagesDao: MarkerImagesDao,
         @ApplicationContext context: Context
-    ): MainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao,context)
+    ): MainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao, context)
 
     @Provides
     @Singleton

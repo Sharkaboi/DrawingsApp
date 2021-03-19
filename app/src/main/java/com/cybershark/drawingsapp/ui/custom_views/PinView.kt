@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.customview
+package com.cybershark.drawingsapp.ui.custom_views
 
 import android.content.Context
 import android.graphics.Bitmap

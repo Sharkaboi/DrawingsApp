@@ -36,14 +36,21 @@ import kotlin.properties.Delegates
 class AddOrEditDrawingDialog : DialogFragment() {
 
     private val mainViewModel by viewModels<MainViewModel>()
-    private lateinit var binding: FragmentAddEditDrawingBinding
+    private var _binding: FragmentAddEditDrawingBinding? = null
+    private val binding get() = _binding!!
+
     private var drawingID by Delegates.notNull<Int>()
     private val itemToEdit by lazy { mainViewModel.getDrawingByID(drawingID) }
     private lateinit var newImageUri: Uri
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentAddEditDrawingBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentAddEditDrawingBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -73,6 +80,9 @@ class AddOrEditDrawingDialog : DialogFragment() {
                 is UIState.ERROR -> {
                     context?.longToast(uiState.message)
                     this.dismiss()
+                }
+                else -> {
+                    // do nothing
                 }
             }
         }

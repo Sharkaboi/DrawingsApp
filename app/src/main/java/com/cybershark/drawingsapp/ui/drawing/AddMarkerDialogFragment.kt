@@ -28,14 +28,20 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class AddMarkerDialogFragment : DialogFragment() {
 
-    private lateinit var binding: FragmentAddMarkerBinding
     private val drawingViewModel by viewModels<DrawingViewModel>()
     private lateinit var coordinatePoints: PointF
     private var drawingId by Delegates.notNull<Int>()
+    private var _binding: FragmentAddMarkerBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentAddMarkerBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,6 +63,9 @@ class AddMarkerDialogFragment : DialogFragment() {
                 is UIState.ERROR -> {
                     context?.longToast(uiState.message)
                     dismiss()
+                }
+                else -> {
+                    // do nothing
                 }
             }
         }
@@ -81,7 +90,7 @@ class AddMarkerDialogFragment : DialogFragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             itemAnimator = DefaultItemAnimator()
         }
-        // livedata list of temporary images.
+        // live data list of temporary images.
         drawingViewModel.listOfImages.observe(viewLifecycleOwner) { list ->
             val nullOrEmpty = list.isNullOrEmpty()
             binding.rvImages.isVisible = !nullOrEmpty

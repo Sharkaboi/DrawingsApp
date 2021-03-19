@@ -101,7 +101,7 @@ class SettingsActivity : AppCompatActivity() {
         // sets app version code in settings
         private fun setVersionCode() {
             findPreference<Preference>("versionCode")?.summary =
-                BuildConfig.VERSION_CODE.toFloat().toString()
+                "v" + BuildConfig.VERSION_NAME
         }
     }
 }

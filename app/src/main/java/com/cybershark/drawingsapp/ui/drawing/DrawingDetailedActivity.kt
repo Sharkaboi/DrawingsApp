@@ -30,7 +30,6 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.properties.Delegates
 
-
 @AndroidEntryPoint
 class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.OnImageEventListener, View.OnTouchListener {
 
@@ -87,9 +86,12 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
                     binding.contentLoading.isGone = true
                     this.shortToast(uiState.message)
                 }
+                else -> {
+                    // do nothing
+                }
             }
         }
-        // draws markers as soon as livedata updates
+        // draws markers as soon as live data updates
         drawingViewModel.listOfMarkers.observe(this) { listOfMarkers ->
             drawMarkers(listOfMarkers)
         }

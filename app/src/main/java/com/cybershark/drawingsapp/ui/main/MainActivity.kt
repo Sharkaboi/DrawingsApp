@@ -104,10 +104,10 @@ class MainActivity : AppCompatActivity(), DrawingItemListeners {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.delete_drawing)
             .setMessage(R.string.irreversible)
-            .setPositiveButton(android.R.string.yes) { _, _ ->
+            .setPositiveButton(android.R.string.ok) { _, _ ->
                 mainViewModel.deleteDrawing(id)
             }
-            .setNegativeButton(android.R.string.no) { dialog, _ ->
+            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()

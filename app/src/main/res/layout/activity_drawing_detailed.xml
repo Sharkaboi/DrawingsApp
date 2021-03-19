@@ -18,7 +18,7 @@
         tools:title="Bottom floor plan of B block West wing."
         app:titleTextColor="@android:color/white" />
 
-    <com.cybershark.drawingsapp.ui.customview.PinView
+    <com.cybershark.drawingsapp.ui.custom_views.PinView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

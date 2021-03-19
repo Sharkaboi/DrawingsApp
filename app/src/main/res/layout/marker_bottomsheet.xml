@@ -73,6 +73,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/images"
                 android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="@+id/tvMarkerDescription"
                 app:layout_constraintTop_toBottomOf="@+id/tvMarkerDescription" />
 

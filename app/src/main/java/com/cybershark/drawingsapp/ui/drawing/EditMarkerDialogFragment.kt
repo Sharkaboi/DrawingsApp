@@ -28,14 +28,15 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class EditMarkerDialogFragment : DialogFragment() {
 
-    private lateinit var binding: FragmentEditMarkerBinding
     private val drawingViewModel by viewModels<DrawingViewModel>()
     private var drawingId by Delegates.notNull<Int>()
     private var markerID by Delegates.notNull<Int>()
     private lateinit var currentMarker: MarkerEntity
+    private var _binding: FragmentEditMarkerBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentEditMarkerBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentEditMarkerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -46,6 +47,11 @@ class EditMarkerDialogFragment : DialogFragment() {
         setData()
         setupRecyclerView()
         setupListeners()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     // Gets marker and drawing id from arguments
@@ -109,6 +115,9 @@ class EditMarkerDialogFragment : DialogFragment() {
                 }
                 is UIState.ERROR -> {
                     context?.longToast(uiState.message)
+                }
+                else -> {
+                    // do nothing
                 }
             }
         }

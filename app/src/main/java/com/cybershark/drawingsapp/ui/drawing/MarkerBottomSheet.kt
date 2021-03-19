@@ -27,16 +27,22 @@ import kotlin.properties.Delegates
 @AndroidEntryPoint
 class MarkerBottomSheet : BottomSheetDialogFragment() {
 
-    private lateinit var binding: MarkerBottomsheetBinding
     private val drawingViewModel by viewModels<DrawingViewModel>()
     private var markerID by Delegates.notNull<Int>()
     private var drawingID by Delegates.notNull<Int>()
     private lateinit var imagesObserver: Observer<List<MarkerImagesEntity>>
     private lateinit var markerObserver: Observer<List<MarkerEntity>>
+    private var _binding: MarkerBottomsheetBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = MarkerBottomsheetBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = MarkerBottomsheetBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +62,7 @@ class MarkerBottomSheet : BottomSheetDialogFragment() {
         }
     }
 
-    // Observing livedata to refresh when updated
+    // Observing live data to refresh when updated
     private fun setDataFromLiveData() {
         markerObserver = Observer { list ->
             val markerEntityFromLiveData = list.first { it.markerID == markerID }
@@ -64,10 +70,12 @@ class MarkerBottomSheet : BottomSheetDialogFragment() {
             binding.tvMarkerDescription.text = markerEntityFromLiveData.description
             binding.tvMarkerAssignee.text = markerEntityFromLiveData.assignee
             binding.tvMarkerRemarks.text = markerEntityFromLiveData.remarks
+            binding.tvRemarksHint.isVisible = markerEntityFromLiveData.remarks.isNotBlank()
+            binding.tvMarkerRemarks.isVisible = markerEntityFromLiveData.remarks.isNotBlank()
         }
         drawingViewModel.listOfMarkers.observe(viewLifecycleOwner, markerObserver)
 
-        // Close bottomsheet on finish task
+        // Close bottom sheet on finish task
         drawingViewModel.uiState.observe(viewLifecycleOwner) { uiState ->
             when (uiState) {
                 is UIState.COMPLETED -> {
@@ -78,12 +86,15 @@ class MarkerBottomSheet : BottomSheetDialogFragment() {
                     context?.longToast(uiState.message)
                     dismiss()
                 }
+                else -> {
+                    // do nothing
+                }
             }
         }
     }
 
     private fun setupRecyclerView() {
-        // Setup choosen images from livedata
+        // Setup chosen images from live data
         val adapter = ImagesAdapter()
         binding.rvImages.apply {
             this.adapter = adapter
@@ -93,6 +104,7 @@ class MarkerBottomSheet : BottomSheetDialogFragment() {
         imagesObserver = Observer { listOfMarkerImages ->
             val filteredList = listOfMarkerImages.filter { it.markerID == markerID }
             binding.rvImages.isVisible = filteredList.isNotEmpty()
+            binding.tvImagesHint.isVisible = filteredList.isNotEmpty()
             adapter.submitList(filteredList.map { it.imageURI })
         }
         drawingViewModel.listOfMarkerImagesFromRoom.observe(viewLifecycleOwner, imagesObserver)
@@ -122,12 +134,12 @@ class MarkerBottomSheet : BottomSheetDialogFragment() {
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.delete_marker)
             .setMessage(R.string.irreversible)
-            .setPositiveButton(android.R.string.yes) { _, _ ->
+            .setPositiveButton(android.R.string.ok) { _, _ ->
                 drawingViewModel.listOfMarkerImagesFromRoom.removeObserver(imagesObserver)
                 drawingViewModel.listOfMarkers.removeObserver(markerObserver)
                 drawingViewModel.deleteMarker(markerID, drawingID)
             }
-            .setNegativeButton(android.R.string.no) { dialog, _ ->
+            .setNegativeButton(android.R.string.cancel) { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
