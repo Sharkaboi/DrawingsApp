@@ -57,7 +57,7 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.1.1'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
     //coroutines lifecycle scopes dependencies
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1"
@@ -78,7 +78,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     //util dependencies
-    implementation 'io.coil-kt:coil:0.12.0'
+    implementation 'io.coil-kt:coil:1.1.1'
     //test dependencies
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
     testImplementation 'junit:junit:4.13.2'
