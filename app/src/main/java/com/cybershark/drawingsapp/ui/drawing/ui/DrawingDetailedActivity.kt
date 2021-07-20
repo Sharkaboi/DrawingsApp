@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.drawing
+package com.cybershark.drawingsapp.ui.drawing.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -19,22 +19,20 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.cybershark.drawingsapp.R
-import com.cybershark.drawingsapp.data.models.MarkerEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerEntity
 import com.cybershark.drawingsapp.databinding.ActivityDrawingDetailedBinding
+import com.cybershark.drawingsapp.ui.add_marker.ui.AddMarkerDialogFragment
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
-import com.cybershark.drawingsapp.util.UIState
-import com.cybershark.drawingsapp.util.longToast
-import com.cybershark.drawingsapp.util.shortToast
+import com.cybershark.drawingsapp.ui.marker_detailed.ui.MarkerBottomSheet
+import com.cybershark.drawingsapp.util.*
 import com.davemorrissey.labs.subscaleview.ImageSource
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.properties.Delegates
 
 @AndroidEntryPoint
 class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.OnImageEventListener, View.OnTouchListener {
 
     private lateinit var binding: ActivityDrawingDetailedBinding
-    private var drawingId by Delegates.notNull<Int>()
     private val drawingViewModel by viewModels<DrawingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +40,6 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
         binding = ActivityDrawingDetailedBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbarDrawing)
-
         getDrawingIDFromIntent()
         loadImage()
         setLiveData()
@@ -51,44 +48,36 @@ class DrawingDetailedActivity : AppCompatActivity(), SubsamplingScaleImageView.O
     private fun getDrawingIDFromIntent() {
         val bundle = intent.extras
         if (bundle != null) {
-            drawingId = bundle.getInt(INTENT_ID_KEY)
+            val drawingId = bundle.getInt(INTENT_ID_KEY)
+            drawingViewModel.initDrawing(drawingId)
         } else {
             finish()
-            longToast("Error retrieving the drawing, Try again!")
+            showToast("Error retrieving the drawing, Try again!")
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun loadImage() {
         binding.contentLoading.isVisible = true
         binding.imageView.apply {
-            drawingViewModel.currentDrawing.observe(this@DrawingDetailedActivity) { currentDrawing ->
+            observe(drawingViewModel.currentDrawing) { currentDrawing ->
                 this.setImage(ImageSource.uri(currentDrawing.imageURI))
             }
             this.setOnImageEventListener(this@DrawingDetailedActivity)
             this.setOnTouchListener(this@DrawingDetailedActivity)
             this.setMinimumDpi(100)
             //set dp super high to disable zoom on double tap
-            this.setDoubleTapZoomDpi(999999)
+            this.setDoubleTapZoomDpi(Int.MAX_VALUE)
         }
     }
 
     private fun setLiveData() {
         //observer ui state to show progress bar
         drawingViewModel.uiState.observe(this) { uiState ->
+            binding.contentLoading.isVisible = uiState is UIState.LOADING
             when (uiState) {
-                is UIState.ERROR -> {
-                    binding.contentLoading.isGone = true
-                    this.longToast(uiState.message)
-                }
-                is UIState.LOADING -> binding.contentLoading.isVisible = true
-                is UIState.COMPLETED -> {
-                    binding.contentLoading.isGone = true
-                    this.shortToast(uiState.message)
-                }
-                else -> {
-                    // do nothing
-                }
+                is UIState.ERROR -> showToast(uiState.message)
+                is UIState.COMPLETED -> showToast(uiState.message)
+                else -> Unit
             }
         }
         // draws markers as soon as live data updates

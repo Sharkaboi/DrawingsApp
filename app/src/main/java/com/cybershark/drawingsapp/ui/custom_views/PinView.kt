@@ -30,6 +30,10 @@ class PinView @JvmOverloads constructor(context: Context?, attr: AttributeSet? =
         }
     }
 
+    override fun performClick(): Boolean {
+        return super.performClick()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 

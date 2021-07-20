@@ -2,7 +2,8 @@ package com.cybershark.drawingsapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.cybershark.drawingsapp.data.repository.MainRepository
+import com.cybershark.drawingsapp.ui.main.repository.IMainRepository
+import com.cybershark.drawingsapp.ui.main.repository.MainRepository
 import com.cybershark.drawingsapp.data.room.dao.DrawingsDao
 import com.cybershark.drawingsapp.data.room.dao.MarkerImagesDao
 import com.cybershark.drawingsapp.data.room.dao.MarkersDao
@@ -23,9 +24,8 @@ object DataModule {
     fun provideMainRepository(
         drawingsDao: DrawingsDao,
         markersDao: MarkersDao,
-        markerImagesDao: MarkerImagesDao,
-        @ApplicationContext context: Context
-    ): MainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao, context)
+        markerImagesDao: MarkerImagesDao
+    ): IMainRepository = MainRepository(drawingsDao, markersDao, markerImagesDao)
 
     @Provides
     @Singleton

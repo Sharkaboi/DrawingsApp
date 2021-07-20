@@ -1,6 +1,6 @@
 # Drawings Manager
 ![Gradle Build](https://github.com/Sharkaboi/DrawingsApp/workflows/Gradle%20Build/badge.svg)
-![Kotlin Version](https://img.shields.io/badge/Kotlin-1.4.31-blue)
+![Kotlin Version](https://img.shields.io/badge/Kotlin-1.5.21-blue)
 ![Min API](https://img.shields.io/badge/Min%20API-21-green)
 ![License](https://img.shields.io/badge/License-MIT-orange)
 ![Contributors](https://img.shields.io/github/contributors/sharkaboi/DrawingsApp)  
@@ -15,7 +15,8 @@ An app to add and manage floor plan drawings with markers.
 * Room
 * ViewBinding
 * Coroutines
-* Hilt beta
+* Hilt
+* Jetpack navigation and SafeArgs
 * MDC Library
 * KTX Extensions
 * Coil

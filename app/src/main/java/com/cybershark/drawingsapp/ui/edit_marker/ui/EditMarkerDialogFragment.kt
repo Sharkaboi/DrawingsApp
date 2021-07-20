@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.drawing
+package com.cybershark.drawingsapp.ui.edit_marker.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -13,11 +13,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.cybershark.drawingsapp.data.models.MarkerEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerEntity
 import com.cybershark.drawingsapp.databinding.FragmentEditMarkerBinding
 import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
-import com.cybershark.drawingsapp.ui.main.AddOrEditDrawingDialog
+import com.cybershark.drawingsapp.ui.add_edit_drawing.ui.AddOrEditDrawingDialog
+import com.cybershark.drawingsapp.ui.add_marker.ui.AddMarkerDialogFragment
 import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast

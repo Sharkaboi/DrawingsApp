@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.data.models
+package com.cybershark.drawingsapp.data.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

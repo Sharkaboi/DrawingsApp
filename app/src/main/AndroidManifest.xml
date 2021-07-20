@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.cybershark.drawingsapp">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
     <application
         android:name=".DrawingsApp"
         android:allowBackup="true"
@@ -21,7 +19,7 @@
             android:label="@string/title_activity_settings"
             android:launchMode="singleTask" />
         <activity
-            android:name=".ui.drawing.DrawingDetailedActivity"
+            android:name=".ui.drawing.ui.DrawingDetailedActivity"
             android:launchMode="singleTask" />
         <activity
             android:name=".ui.main.MainActivity"

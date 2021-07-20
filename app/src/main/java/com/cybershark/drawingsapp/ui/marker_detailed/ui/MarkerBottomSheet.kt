@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.ui.drawing
+package com.cybershark.drawingsapp.ui.marker_detailed.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,11 +11,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cybershark.drawingsapp.R
-import com.cybershark.drawingsapp.data.models.MarkerEntity
-import com.cybershark.drawingsapp.data.models.MarkerImagesEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerImagesEntity
 import com.cybershark.drawingsapp.databinding.MarkerBottomsheetBinding
 import com.cybershark.drawingsapp.ui.drawing.adapters.ImagesAdapter
 import com.cybershark.drawingsapp.ui.drawing.viewmodel.DrawingViewModel
+import com.cybershark.drawingsapp.ui.edit_marker.ui.EditMarkerDialogFragment
 import com.cybershark.drawingsapp.util.UIState
 import com.cybershark.drawingsapp.util.longToast
 import com.cybershark.drawingsapp.util.shortToast

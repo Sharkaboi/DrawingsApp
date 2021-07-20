@@ -2,7 +2,8 @@ package com.cybershark.drawingsapp.data.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.cybershark.drawingsapp.data.models.DrawingEntity
+import com.cybershark.drawingsapp.data.room.entities.DrawingEntity
+import com.cybershark.drawingsapp.data.room.entities.DrawingsWithMarkersAndMarkerImages
 
 @Dao
 interface DrawingsDao {
@@ -16,19 +17,20 @@ interface DrawingsDao {
     @Query("delete from drawings where id=:drawingID")
     suspend fun deletedDrawing(drawingID: Int): Int
 
-    @Query("update drawings set markerCount=markerCount+1 where id=:drawingID")
-    suspend fun incrementMarkerCount(drawingID: Int)
-
-    @Query("update drawings set markerCount=markerCount-1 where id=:drawingID")
-    suspend fun decrementMarkerCount(drawingID: Int): Int
-
     @Query("delete from drawings")
     suspend fun deleteAllData()
 
     @Query("select * from drawings order by timeAdded desc")
     fun getAllDrawings(): LiveData<List<DrawingEntity>>
 
-    @Query("select * from drawings where id=:drawingID")
-    fun getDrawingByID(drawingID: Int): LiveData<DrawingEntity>
+    @Transaction
+    @Query("select * from drawings order by timeAdded desc")
+    fun getAllDrawingsMerged(): LiveData<List<DrawingsWithMarkersAndMarkerImages>>
 
+    @Query("select * from drawings where id=:drawingID")
+    fun getDrawingByID(drawingID: Int): DrawingEntity
+
+    @Transaction
+    @Query("select * from drawings where id=:drawingID")
+    fun getDrawingByIDMerged(drawingID: Int): LiveData<DrawingsWithMarkersAndMarkerImages>
 }

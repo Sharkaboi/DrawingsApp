@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.data.models
+package com.cybershark.drawingsapp.data.room.entities
 
 import android.net.Uri
 import androidx.room.Entity
@@ -9,6 +9,5 @@ data class MarkerImagesEntity(
     @PrimaryKey(autoGenerate = true)
     val imageID: Int = 0,
     val markerID: Int,
-    val drawingID: Int,
     val imageURI: Uri
 )

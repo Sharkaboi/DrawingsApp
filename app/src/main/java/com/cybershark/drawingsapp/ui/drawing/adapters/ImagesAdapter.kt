@@ -14,7 +14,6 @@ import com.cybershark.drawingsapp.databinding.MarkerAttachedImagesItemBinding
 class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
 
     private val diffUtilItemCallback = object : DiffUtil.ItemCallback<Uri>() {
-
         override fun areItemsTheSame(oldItem: Uri, newItem: Uri): Boolean {
             return oldItem === newItem
         }
@@ -22,7 +21,6 @@ class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
         override fun areContentsTheSame(oldItem: Uri, newItem: Uri): Boolean {
             return oldItem == newItem
         }
-
     }
 
     private val listDiffer = AsyncListDiffer(this, diffUtilItemCallback)
@@ -38,18 +36,13 @@ class ImagesAdapter : RecyclerView.Adapter<ImagesAdapter.ImagesViewHolder>() {
         holder.bind(listDiffer.currentList[position])
     }
 
-    override fun getItemCount(): Int {
-        return listDiffer.currentList.size
-    }
+    override fun getItemCount(): Int = listDiffer.currentList.size
 
-    fun submitList(list: List<Uri>) {
-        listDiffer.submitList(list)
-    }
+    fun submitList(list: List<Uri>) = listDiffer.submitList(list)
 
     class ImagesViewHolder(private val binding: MarkerAttachedImagesItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(uri: Uri) {
-
             binding.ivImage.load(uri) {
                 error(R.drawable.ic_error)
                 transformations(RoundedCornersTransformation(4f))

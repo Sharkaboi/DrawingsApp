@@ -2,7 +2,7 @@ package com.cybershark.drawingsapp.data.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.cybershark.drawingsapp.data.models.MarkerImagesEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerImagesEntity
 
 @Dao
 interface MarkerImagesDao {
@@ -26,11 +26,8 @@ interface MarkerImagesDao {
     suspend fun deleteAllMarkerImagesWithMarkerID(markerID: Int) : Int
 
     @Query("select * from marker_images where markerID=:markerID")
-    fun getMarkerImagesFromID(markerID: Int): LiveData<List<MarkerImagesEntity>>
+    suspend fun getMarkerImagesFromID(markerID: Int): List<MarkerImagesEntity>
 
     @Query("select * from marker_images")
     fun getAllMarkerImages(): LiveData<List<MarkerImagesEntity>>
-
-
-
 }

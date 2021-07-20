@@ -1,4 +1,4 @@
-package com.cybershark.drawingsapp.data.models
+package com.cybershark.drawingsapp.data.room.entities
 
 import android.net.Uri
 import androidx.room.Entity
@@ -11,6 +11,5 @@ data class DrawingEntity(
     val id: Int = 0,
     val title: String,
     val timeAdded: Date,
-    val imageURI: Uri,
-    val markerCount: Int = 0
+    val imageURI: Uri
 )

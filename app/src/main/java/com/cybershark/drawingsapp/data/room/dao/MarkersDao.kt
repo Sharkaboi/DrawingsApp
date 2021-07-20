@@ -2,7 +2,8 @@ package com.cybershark.drawingsapp.data.room.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.cybershark.drawingsapp.data.models.MarkerEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkerEntity
+import com.cybershark.drawingsapp.data.room.entities.MarkersWithMarkerImages
 
 @Dao
 interface MarkersDao {
@@ -31,4 +32,11 @@ interface MarkersDao {
     @Query("select * from markers where drawingID=:id")
     fun getMarkersByID(id: Int): LiveData<List<MarkerEntity>>
 
+    @Transaction
+    @Query("select * from markers")
+    fun getAllMarkersMerged(): LiveData<List<MarkersWithMarkerImages>>
+
+    @Transaction
+    @Query("select * from markers where drawingID=:id")
+    fun getMarkersByIDMerged(id: Int): LiveData<List<MarkersWithMarkerImages>>
 }
